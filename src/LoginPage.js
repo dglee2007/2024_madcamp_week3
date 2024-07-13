@@ -11,7 +11,7 @@ function LoginPage({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://2914-2001-e60-a302-f991-597d-f92d-9ba3-4ca8.ngrok-free.app/api/auth/login', { username, password });
+      const res = await axios.post('https://c6a7-2001-e60-a304-f1d8-31e9-2309-d13b-595.ngrok-free.app/api/auth/login', { username, password });
       /*const res = await axios.post('http://localhost:3000/api/users/login', { username, password });*/
       
       localStorage.setItem('token', res.data.token);

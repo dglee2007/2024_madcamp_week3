@@ -1,4 +1,5 @@
-/* src/App.css */
+/* App.css */
+
 body, html {
   margin: 0;
   padding: 0;
@@ -23,38 +24,45 @@ body, html {
 .Dashboard {
   text-align: center;
   padding: 20px;
-  /*background-image: ; url("src\assets\imac_monitor_background.jpg")*/
-  /*background-image: url('./assets/file.png') ; */
-  
   min-height: 100vh;
   min-width: 1200px; /* 최소 너비 설정 */
-  min-height: 800px; /* 최소 높이 설정 */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: auto;
+}
 
-  overflow:auto;
+.top-section {
+  display: flex;
+  align-items: flex-start; /* 수직 정렬을 상단으로 맞춤 */
+  justify-content: flex-start; /* 수평 정렬을 왼쪽으로 맞춤 */
+  width: 100%; /* 전체 너비 사용 */
+
+  gap: 20px; /* 요소 사이의 간격 */
+}
+
+.price_now {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transform: scale(1.5); /* 크기를 두 배로 키움 */
+  transform-origin: top left; /* 크기 변경 기준점을 좌측 상단으로 설정 */
+  position: absolute;
+  left: 20px; /* 좌측에서 20px 띄움 */
+  top: 50%; /* 수직 정렬을 중간으로 맞춤 */
+  transform: translateY(-75%) scale(1.5); /* 중간 정렬 및 크기 조정 */
 }
 
 .icons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  
   gap: 2vh 2vw; /* 세로 간격을 vh 단위로, 가로 간격을 vw 단위로 설정합니다 */
-
-  position: absolute;
-  top: 20px;  /* 상단에서 20px 띄움 */
-  left: 20px; /* 좌측에서 20px 띄움 */
-  flex-direction: column; /* 아이콘을 세로로 배치 */
-
-
   border: 5px solid #333; /* 두꺼운 사각형 테두리 추가 */
   padding: 40px; /* 테두리와 아이콘 사이에 여유 공간 추가 */
   border-radius: 20px; /* 테두리의 모서리를 둥글게 만듦 */
-
   margin-bottom: 40px; /* 아이콘과 테이블 사이 간격 추가 */
-
 }
 
 .icon-container {
@@ -101,14 +109,14 @@ body, html {
   min-width: 200px;
 }
 
-.menu-item{
+.menu-item {
   margin: 10px;
   cursor: pointer;
   color: blue;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
-.mini-tab{
+.mini-tab {
   background: white;
   padding: 20px;
   border: 1px solid #ccc;
@@ -123,8 +131,8 @@ body, html {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.mini-tab-content{
-  margin-top:10px;
+.mini-tab-content {
+  margin-top: 10px;
 }
 
 .close-button {
@@ -134,36 +142,6 @@ body, html {
   font-size: 20px;
   cursor: pointer;
   margin: 10px;
-}
-
-.bottom-left-table {
-  position: absolute;
-  bottom: 20px;  /* 하단에서 20px 띄움 */
-  left: 20px;    /* 좌측에서 20px 띄움 */
-}
-
-.bottom-left-table table {
-  border-collapse: collapse;
-}
-
-.bottom-left-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
-}
-
-.top-right-table {
-  position: absolute;
-  top: 20px;  /* 상단에서 20px 띄움 */
-  right: 20px; /* 우측에서 20px 띄움 */
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  
-
-  transform: scale(1.5); /* 크기를 두 배로 키움 */
-  transform-origin: top right; /* 크기 변경 기준점을 우측 상단으로 설정 */
 }
 
 .header {
@@ -182,23 +160,58 @@ body, html {
   cursor: pointer;
 }
 
-.top-right-table table {
+.price_now table {
   border-collapse: collapse;
   width: 100%;
   margin-top: 10px;
 }
 
-.top-right-table th, .top-right-table td {
+.price_now th, .price_now td {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: center;
 }
 
-.top-right-table th {
+.price_now th {
   background-color: #f2f2f2;
 }
 
-.bottom-right-buttons {
+.account {
+  position: absolute;
+  top: 540px; /* 위치를 올리기 위해 top 속성을 조정합니다 */
+  right: 20px; /* 우측에서 20px 띄움 */
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transform: scale(1);
+  transform-origin: top left;
+}
+
+.account table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.account th, .account td {
+  border: 1px solid #ccc;
+  padding: 16px;
+  text-align: center;
+}
+
+.account th {
+  background-color: #f2f2f2;
+}
+
+.account .odd-row {
+  background-color: white;
+}
+
+.account .even-row {
+  background-color: #f2f2f2;
+}
+
+.control_buttons {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -221,42 +234,4 @@ body, html {
 
 .action-button:hover {
   background-color: #45a049;
-}
-
-.bottom-left-table {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transform: scale(1);
-  transform-origin: bottom left; /* 크기 변경 기준점 설정 */
-  margin-top: 40px; /* 아이콘과의 간격 추가 */
-
-
-}
-
-.bottom-left-table table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.bottom-left-table th, .bottom-left-table td {
-  border: 1px solid #ccc;
-  padding: 16px;
-  text-align: center;
-}
-
-.bottom-left-table th {
-  background-color: #f2f2f2;
-}
-
-.bottom-left-table .odd-row {
-  background-color: white;
-}
-
-.bottom-left-table .even-row {
-  background-color: #f2f2f2;
 }

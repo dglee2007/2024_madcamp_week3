@@ -48,54 +48,85 @@ function Dashboard() {
 
   return (
     <div className="Dashboard">
-      <div className="icons">
-        <div className="icon-container">
-          <img src={company1} alt="Company 1" onClick={() => handleIconClick('Company 1')} />
-          <span>company1</span>
+      <div className="top-section">
+        <div className="price_now">
+          <table>
+            <thead>
+              <tr>
+                <th colSpan="2">2014년</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['A IT', '28,000'],
+                ['B IT', '33,000'],
+                ['C 자동차', '11,000'],
+                ['D 자동차', '50,000'],
+                ['E 바이오', '15,000'],
+                ['F 바이오', '82,500'],
+                ['G 패션', '33,000'],
+                ['H 스포츠', '33,000'],
+                ['I 미디어', '49,500'],
+                ['J 항공', '28,000']
+              ].map((row, rowIndex) => (
+                <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'odd-row' : 'even-row'}>
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="icon-container">
-          <img src={company2} alt="Company 2" onClick={() => handleIconClick('Company 2')} />
-          <span>company2</span>
-        </div>
-        <div className="icon-container">
-          <img src={company3} alt="Company 3" onClick={() => handleIconClick('Company 3')} />
-          <span>company3</span>
-        </div>
-        <div className="icon-container">
-          <img src={company4} alt="Company 4" onClick={() => handleIconClick('Company 4')} />
-          <span>company4</span>
-        </div>
-        <div className="icon-container">
-          <img src={company5} alt="Company 5" onClick={() => handleIconClick('Company 5')} />
-          <span>company5</span>
-        </div>
-        <div className="icon-container">
-          <img src={company6} alt="Company 6" onClick={() => handleIconClick('Company 6')} />
-          <span>company6</span>
-        </div>
-        <div className="icon-container">
-          <img src={company7} alt="Company 7" onClick={() => handleIconClick('Company 7')} />
-          <span>company7</span>
-        </div>
-        <div className="icon-container">
-          <img src={company8} alt="Company 8" onClick={() => handleIconClick('Company 8')} />
-          <span>company8</span>
-        </div>
-        <div className="icon-container">
-          <img src={company9} alt="Company 9" onClick={() => handleIconClick('Company 9')} />
-          <span>company9</span>
-        </div>
-        <div className="icon-container">
-          <img src={company10} alt="Company 10" onClick={() => handleIconClick('Company 10')} />
-          <span>company10</span>
-        </div>
-        <div className="icon-container">
-          <img src={company11} alt="Company 11" onClick={() => handleIconClick('Company 11')} />
-          <span>company11</span>
-        </div>
-        <div className="icon-container">
-          <img src={company12} alt="Company 12" onClick={() => handleIconClick('Company 12')} />
-          <span>company12</span>
+        <div className="icons">
+          <div className="icon-container">
+            <img src={company1} alt="Company 1" onClick={() => handleIconClick('Company 1')} />
+            <span>company1</span>
+          </div>
+          <div className="icon-container">
+            <img src={company2} alt="Company 2" onClick={() => handleIconClick('Company 2')} />
+            <span>company2</span>
+          </div>
+          <div className="icon-container">
+            <img src={company3} alt="Company 3" onClick={() => handleIconClick('Company 3')} />
+            <span>company3</span>
+          </div>
+          <div className="icon-container">
+            <img src={company4} alt="Company 4" onClick={() => handleIconClick('Company 4')} />
+            <span>company4</span>
+          </div>
+          <div className="icon-container">
+            <img src={company5} alt="Company 5" onClick={() => handleIconClick('Company 5')} />
+            <span>company5</span>
+          </div>
+          <div className="icon-container">
+            <img src={company6} alt="Company 6" onClick={() => handleIconClick('Company 6')} />
+            <span>company6</span>
+          </div>
+          <div className="icon-container">
+            <img src={company7} alt="Company 7" onClick={() => handleIconClick('Company 7')} />
+            <span>company7</span>
+          </div>
+          <div className="icon-container">
+            <img src={company8} alt="Company 8" onClick={() => handleIconClick('Company 8')} />
+            <span>company8</span>
+          </div>
+          <div className="icon-container">
+            <img src={company9} alt="Company 9" onClick={() => handleIconClick('Company 9')} />
+            <span>company9</span>
+          </div>
+          <div className="icon-container">
+            <img src={company10} alt="Company 10" onClick={() => handleIconClick('Company 10')} />
+            <span>company10</span>
+          </div>
+          <div className="icon-container">
+            <img src={company11} alt="Company 11" onClick={() => handleIconClick('Company 11')} />
+            <span>company11</span>
+          </div>
+          <div className="icon-container">
+            <img src={company12} alt="Company 12" onClick={() => handleIconClick('Company 12')} />
+            <span>company12</span>
+          </div>
         </div>
       </div>
       {menuVisible && (
@@ -116,10 +147,10 @@ function Dashboard() {
           </div>
         </div>
       )}
-      <div className="top-right-table">
+      <div className="account">
         <div className="header">
           <button className="info-button">안내</button>
-          <span>님의 계좌 잔고</span>
+          <span>하하 님의 계좌 잔고</span>
           <button className="query-button">조회</button>
         </div>
         <table>
@@ -143,46 +174,10 @@ function Dashboard() {
           </tbody>
         </table>
       </div>
-      <div className="bottom-right-buttons">
+      <div className="control_buttons">
         <button className="action-button">매수</button>
         <button className="action-button">매도</button>
         <button className="action-button">결정</button>
-      </div>
-      <div className="bottom-left-table">
-        <table>
-          <tbody>
-            {[...Array(4)].map((_, rowIndex) => (
-              <tr key={rowIndex}>
-                {[...Array(6)].map((_, colIndex) => (
-                  <td key={colIndex}>Cell {rowIndex * 6 + colIndex + 1}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="bottom-left-table">
-        <table>
-          <thead>
-            <tr>
-              <th colSpan="6">2014년</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              ['A IT', '28,000', 'B IT', '33,000', 'C 자동차', '11,000'],
-              ['D 자동차', '50,000', 'E 바이오', '15,000', 'F 바이오', '82,500'],
-              ['G 패션', '33,000', 'H 스포츠', '33,000', 'I 미디어', '49,500'],
-              ['J 항공', '28,000']
-            ].map((row, rowIndex) => (
-              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'odd-row' : 'even-row'}>
-                {row.map((cell, cellIndex) => (
-                  <td key={cellIndex}>{cell}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );
