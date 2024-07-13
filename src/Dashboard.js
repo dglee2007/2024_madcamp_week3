@@ -116,6 +116,74 @@ function Dashboard() {
           </div>
         </div>
       )}
+      <div className="top-right-table">
+        <div className="header">
+          <button className="info-button">안내</button>
+          <span>님의 계좌 잔고</span>
+          <button className="query-button">조회</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>종목명</th>
+              <th>매입금액</th>
+              <th>주식수</th>
+              <th>현재금액</th>
+              <th>수익률</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(8)].map((_, rowIndex) => (
+              <tr key={rowIndex}>
+                {[...Array(5)].map((_, colIndex) => (
+                  <td key={colIndex}></td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="bottom-right-buttons">
+        <button className="action-button">매수</button>
+        <button className="action-button">매도</button>
+        <button className="action-button">결정</button>
+      </div>
+      <div className="bottom-left-table">
+        <table>
+          <tbody>
+            {[...Array(4)].map((_, rowIndex) => (
+              <tr key={rowIndex}>
+                {[...Array(6)].map((_, colIndex) => (
+                  <td key={colIndex}>Cell {rowIndex * 6 + colIndex + 1}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="bottom-left-table">
+        <table>
+          <thead>
+            <tr>
+              <th colSpan="6">2014년</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['A IT', '28,000', 'B IT', '33,000', 'C 자동차', '11,000'],
+              ['D 자동차', '50,000', 'E 바이오', '15,000', 'F 바이오', '82,500'],
+              ['G 패션', '33,000', 'H 스포츠', '33,000', 'I 미디어', '49,500'],
+              ['J 항공', '28,000']
+            ].map((row, rowIndex) => (
+              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'odd-row' : 'even-row'}>
+                {row.map((cell, cellIndex) => (
+                  <td key={cellIndex}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
