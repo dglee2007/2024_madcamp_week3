@@ -1,7 +1,7 @@
 // src/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 
 function LoginPage({ onLogin }) {
   const navigate = useNavigate();
@@ -11,17 +11,29 @@ function LoginPage({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://c6a7-2001-e60-a304-f1d8-31e9-2309-d13b-595.ngrok-free.app/api/auth/login', { username, password });
-      /*const res = await axios.post('http://localhost:3000/api/users/login', { username, password });*/
-      
-      localStorage.setItem('token', res.data.token);
-      onLogin();
-      navigate('/dashboard');
+      const response = await fetch('https://a794-2001-e60-a30d-f741-2145-eab9-5d7e-279.ngrok-free.app/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await response.json();
+      if (data.accessToken && data.refreshToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('userId',data.message);
+        console.log('로그인 성공:', data.message);
+        onLogin();
+        navigate('/main');
+      } else {
+        console.error('로그인 실패:', data.message);
+      }
     } catch (error) {
-      console.error(error);
-      alert('Login failed');
+      console.error('Error:', error);
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>

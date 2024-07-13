@@ -1,18 +1,22 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import SignupPage from './SignupPage';
+import MainPage from './MainPage';
+//import SignupPage from './SignupPage';
 import Dashboard from './Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
-  const handleSignup = () => {
+  const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
@@ -24,9 +28,9 @@ function App() {
           element={isLoggedIn ? <Navigate to="/dashboard" /> : <LoginPage onLogin={handleLogin} />}
         />
         <Route
-          path="/signup"
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <SignupPage onSignup={handleSignup} />}
-        />
+          path="/main"
+          element={isLoggedIn ? <MainPage /> : <Navigate to="/login" />} 
+          />
         <Route
           path="/dashboard"
           element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
