@@ -1,43 +1,32 @@
-// src/App.js
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import MainPage from './MainPage';
-//import SignupPage from './SignupPage';
-import Dashboard from './Dashboard';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import HomePage from './pages/HomePage';
+import GamePage from './pages/GamePage';
+import RankingPage from './pages/RankingPage';
+import ProfilePage from './pages/ProfilePage';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+
+const PrivateRoute = ({ children }) => {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" />;
+};
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={isLoggedIn ? <Navigate to="/main" /> : <LoginPage onLogin={handleLogin} />}
-        />
-        <Route
-          path="/main"
-          element={isLoggedIn ? <MainPage /> : <Navigate to="/login" />} 
-          />
-        <Route
-          path="/dashboard"
-          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
-        />
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          <Route path="/game/:sessionId" element={<PrivateRoute><GamePage /></PrivateRoute>} />
+          <Route path="/ranking" element={<PrivateRoute><RankingPage /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
