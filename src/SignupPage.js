@@ -16,7 +16,7 @@ function SignupPage({ onSignup }) {
       return;
     }
     try {
-      await axios.post('https://a794-2001-e60-a30d-f741-2145-eab9-5d7e-279.ngrok-free.app/api/auth/register', { username, password });
+      await axios.post('https://25c7-118-235-90-93.ngrok-free.app/api/auth/register', { username, password });
       /*await axios.post('http://localhost:3000/api/users/signup', { username, password });*/
       onSignup();
       navigate('/login');

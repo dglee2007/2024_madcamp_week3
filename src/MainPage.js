@@ -6,9 +6,9 @@ function MainPage() {
   const navigate = useNavigate();
 
   const handlePlayClick = async () => {
-    const userId = localStorage.getItem('userId');
+    const userId = parseInt(localStorage.getItem('userId'), 10); // userId를 정수로 변환
     try {
-      const response = await fetch('https://a794-2001-e60-a30d-f741-2145-eab9-5d7e-279.ngrok-free.app/start-game', {
+      const response = await fetch('https://25c7-118-235-90-93.ngrok-free.app/api/game/start-game', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

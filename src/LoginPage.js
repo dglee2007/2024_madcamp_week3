@@ -11,7 +11,7 @@ function LoginPage({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://a794-2001-e60-a30d-f741-2145-eab9-5d7e-279.ngrok-free.app/api/auth/login', {
+      const response = await fetch('https://25c7-118-235-90-93.ngrok-free.app/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -22,8 +22,8 @@ function LoginPage({ onLogin }) {
       if (data.accessToken && data.refreshToken) {
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
-        localStorage.setItem('userId',data.message);
-        console.log('로그인 성공:', data.message);
+        localStorage.setItem('userId', data.userId); // userId를 올바르게 저장
+        console.log('로그인 성공:', data.userId);
         onLogin();
         navigate('/main');
       } else {

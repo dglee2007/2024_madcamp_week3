@@ -25,7 +25,7 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <LoginPage onLogin={handleLogin} />}
+          element={isLoggedIn ? <Navigate to="/main" /> : <LoginPage onLogin={handleLogin} />}
         />
         <Route
           path="/main"
@@ -35,7 +35,7 @@ function App() {
           path="/dashboard"
           element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
         />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

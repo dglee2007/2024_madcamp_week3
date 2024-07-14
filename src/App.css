@@ -42,18 +42,7 @@ body, html {
   gap: 20px; /* 요소 사이의 간격 */
 }
 
-.price_now {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transform: scale(1.5); /* 크기를 두 배로 키움 */
-  transform-origin: top left; /* 크기 변경 기준점을 좌측 상단으로 설정 */
-  position: absolute;
-  left: 20px; /* 좌측에서 20px 띄움 */
-  top: 50%; /* 수직 정렬을 중간으로 맞춤 */
-  transform: translateY(-75%) scale(1.5); /* 중간 정렬 및 크기 조정 */
-}
+
 
 .icons {
   display: grid;
@@ -158,6 +147,19 @@ body, html {
   border: none;
   padding: 5px;
   cursor: pointer;
+}
+
+.price_now {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transform: scale(1.5); /* 크기를 두 배로 키움 */
+  transform-origin: top left; /* 크기 변경 기준점을 좌측 상단으로 설정 */
+  position: absolute;
+  left: 20px; /* 좌측에서 20px 띄움 */
+  top: 50%; /* 수직 정렬을 중간으로 맞춤 */
+  transform: translateY(-75%) scale(1.5); /* 중간 정렬 및 크기 조정 */
 }
 
 .price_now table {
