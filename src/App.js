@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage'; // 정확한 파일 이름을 사용
 import GamePage from './pages/GamePage';
 import RankingPage from './pages/RankingPage';
 import ProfilePage from './pages/ProfilePage';

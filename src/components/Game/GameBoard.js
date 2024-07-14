@@ -1,46 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getGameState, endTurn } from '../../services/api';
+import React, { useState } from 'react';
 import CompanyList from './CompanyList';
 import Portfolio from './Portfolio';
-import News from './News';
+import NewsModal from './NewsModal';
+import { endTurn, tradeStock } from '../../services/api';
+import '../../styles/GameBoard.css';
 
-const GameBoard = () => {
-  const { sessionId } = useParams();
-  const [gameState, setGameState] = useState(null);
-
-  useEffect(() => {
-    fetchGameState();
-  }, [sessionId]);
-
-  const fetchGameState = async () => {
-    try {
-      const response = await getGameState(sessionId);
-      setGameState(response.data);
-    } catch (error) {
-      console.error('Failed to fetch game state:', error);
-    }
-  };
+const GameBoard = ({ gameState, sessionId }) => {
+  const [showNewsModal, setShowNewsModal] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   const handleEndTurn = async () => {
     try {
-      await endTurn(sessionId);
-      fetchGameState();
+      const response = await endTurn(sessionId);
+      // Update game state with new turn data
     } catch (error) {
       console.error('Failed to end turn:', error);
     }
   };
 
-  if (!gameState) return <div>Loading...</div>;
+  const handleTrade = async (companyId, amount, action) => {
+    try {
+      await tradeStock(sessionId, companyId, amount, action);
+      // Update game state after successful trade
+    } catch (error) {
+      console.error('Trade failed:', error);
+    }
+  };
+
+  const handleCompanyClick = (company) => {
+    setSelectedCompany(company);
+    setShowNewsModal(true);
+  };
 
   return (
-    <div>
-      <h2>Game Year: {gameState.session.current_year}</h2>
-      <h3>Balance: ${gameState.session.current_balance.toFixed(2)}</h3>
-      <CompanyList companies={gameState.companies} />
-      <Portfolio investments={gameState.investments} />
-      <News sessionId={sessionId} />
-      <button onClick={handleEndTurn}>End Turn</button>
+    <div className="game-board">
+      <div className="left-panel">
+        <CompanyList 
+          companies={gameState.companies} 
+          onCompanyClick={handleCompanyClick}
+        />
+      </div>
+      <div className="right-panel">
+        <Portfolio investments={gameState.investments} />
+        <div className="actions">
+          <button onClick={handleEndTurn}>End Turn</button>
+        </div>
+      </div>
+      {showNewsModal && (
+        <NewsModal 
+          company={selectedCompany}
+          onClose={() => setShowNewsModal(false)}
+          sessionId={sessionId}
+        />
+      )}
     </div>
   );
 };

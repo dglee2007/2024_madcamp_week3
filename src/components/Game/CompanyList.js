@@ -1,40 +1,30 @@
 import React from 'react';
-import { tradeStock } from '../../services/api';
 
-const CompanyList = ({ companies, sessionId }) => {
-  const handleTrade = async (companyId, action) => {
-    const amount = prompt(`Enter the number of stocks to ${action}:`);
-    if (amount) {
-      try {
-        await tradeStock(sessionId, companyId, parseInt(amount), action);
-        // TODO: Update game state
-      } catch (error) {
-        console.error('Trade failed:', error);
-        alert('Trade failed. Please try again.');
-      }
-    }
-  };
-
+const CompanyList = ({ companies, onCompanyClick }) => {
   return (
-    <div>
-      <h3>Companies</h3>
+    <div className="company-list">
+      <div className="company-icons">
+        {companies.map((company, index) => (
+          <img 
+            key={company.id}
+            src={`/assets/company${index + 1}.png`}
+            alt={company.name}
+            onClick={() => onCompanyClick(company)}
+          />
+        ))}
+      </div>
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Actions</th>
+            <th>Company</th>
+            <th>Stock Price</th>
           </tr>
         </thead>
         <tbody>
-          {companies.map((company) => (
+          {companies.map(company => (
             <tr key={company.id}>
               <td>{company.name}</td>
               <td>${company.price.toFixed(2)}</td>
-              <td>
-                <button onClick={() => handleTrade(company.id, 'buy')}>Buy</button>
-                <button onClick={() => handleTrade(company.id, 'sell')}>Sell</button>
-              </td>
             </tr>
           ))}
         </tbody>

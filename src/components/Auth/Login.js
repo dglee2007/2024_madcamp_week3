@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { login as loginApi } from '../../services/api';
 
@@ -13,9 +13,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await loginApi(username, password);
-      console.log('Login response:', response.data);
-      const userId = response.data.message; // 서버에서 userId를 message로 보내고 있음
-      login({ id: userId }, response.data.accessToken, response.data.refreshToken);
+      const userData = { id: response.data.userId, username }; // userId로 변경
+      login(userData, response.data.accessToken, response.data.refreshToken);
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
@@ -24,23 +23,29 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+      <p>
+        Don't have an account? <Link to="/register">Register here</Link>
+      </p>
+    </div>
   );
 };
 

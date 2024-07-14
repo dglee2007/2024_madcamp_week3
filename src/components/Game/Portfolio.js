@@ -2,18 +2,18 @@ import React from 'react';
 
 const Portfolio = ({ investments }) => {
   return (
-    <div>
+    <div className="portfolio">
       <h3>Your Portfolio</h3>
       <table>
         <thead>
           <tr>
             <th>Company</th>
-            <th>Amount</th>
-            <th>Price per Stock</th>
+            <th>Shares</th>
+            <th>Purchase Price</th>
           </tr>
         </thead>
         <tbody>
-          {investments.map((investment) => (
+          {investments.map(investment => (
             <tr key={investment.company_id}>
               <td>{investment.name}</td>
               <td>{investment.amount}</td>

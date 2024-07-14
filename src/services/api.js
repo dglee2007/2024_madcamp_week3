@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://1d54-2001-e60-a302-2856-10b-ac1-29e4-3f8d.ngrok-free.app/api';
+const BASE_URL = 'https://38ac-118-235-90-169.ngrok-free.app/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -17,16 +17,16 @@ api.interceptors.request.use((config) => {
 export const login = (username, password) => api.post('/auth/login', { username, password });
 export const register = (username, password) => api.post('/auth/register', { username, password });
 export const refreshToken = () => api.post('/auth/refresh-token', { refreshToken: localStorage.getItem('refreshToken') });
-
 export const startGame = (userId) => {
-  console.log('Starting game with userId:', userId);
-  return api.post('/game/start-game', { userId: parseInt(userId) })
+  console.log('Calling startGame API with userId:', userId);
+  return api.post('/game/start-game', { userId })
     .then(response => {
-      console.log('startGame API response:', response.data);
+      console.log('startGame API full response:', response);
+      console.log('startGame API response data:', response.data);
       return response;
     })
     .catch(error => {
-      console.error('startGame API error:', error.response ? error.response.data : error.message);
+      console.error('startGame API error:', error);
       throw error;
     });
 };

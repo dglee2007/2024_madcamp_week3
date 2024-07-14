@@ -7,10 +7,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('accessToken');
-    if (token) {
-      // TODO: Validate token and set user
-      setUser({ token }); // 임시로 토큰이 있으면 사용자가 로그인한 것으로 처리
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -21,9 +21,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
   };
-
+  
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   };
