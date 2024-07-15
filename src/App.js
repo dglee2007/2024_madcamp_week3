@@ -1,40 +1,32 @@
+// src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import MainPage from './pages/MainPage';
-import GamePage from './pages/GamePage';
-import ProfilePage from './pages/ProfilePage';
-import RankingPage from './pages/RankingPage';
-import GameDashboard from './pages/GameDashboard';
-
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-
-function PrivateRoute({ children }) {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  
-  return user ? children : <Navigate to="/login" />;
-}
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { GameProvider } from './contexts/GameContext';  // GameProvider를 import
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import MainMenu from './components/MainMenu';
+import GameBoard from './components/Game/GameBoard';
+import UserProfile from './components/Profile/UserProfile';
+import RankingList from './components/Ranking/RankingList';
+import GameInstructions from './components/GameInstructions';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<PrivateRoute><Navigate to="/main" /></PrivateRoute>} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/main" element={<PrivateRoute><MainPage /></PrivateRoute>} />
-          <Route path="/game-dashboard" element={<PrivateRoute><GameDashboard /></PrivateRoute>} />
-          <Route path="/game" element={<PrivateRoute><GamePage /></PrivateRoute>} />
-          <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="/ranking" element={<PrivateRoute><RankingPage /></PrivateRoute>} />
-        </Routes>
-      </Router>
+      <GameProvider>  {/* GameProvider로 감싸기 */}
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/main" element={<MainMenu />} />
+            <Route path="/game" element={<GameBoard />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/ranking" element={<RankingList />} />
+            <Route path="/instructions" element={<GameInstructions />} />
+          </Routes>
+        </Router>
+      </GameProvider>
     </AuthProvider>
   );
 }
