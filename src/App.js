@@ -1,17 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import HomePage from './pages/HomePage'; // 정확한 파일 이름을 사용
-import GamePage from './pages/GamePage';
-import RankingPage from './pages/RankingPage';
-import ProfilePage from './pages/ProfilePage';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register';
-
-const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
-};
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Main from './pages/Main';
+import Game from './pages/Game';
+import Profile from './pages/Profile';
+import Ranking from './pages/Ranking';
 
 function App() {
   return (
@@ -20,10 +15,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<PrivateRoute><HomePage /></PrivateRoute>} />
-          <Route path="/game/:sessionId" element={<PrivateRoute><GamePage /></PrivateRoute>} />
-          <Route path="/ranking" element={<PrivateRoute><RankingPage /></PrivateRoute>} />
-          <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          <Route path="/" element={<Main />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/ranking" element={<Ranking />} />
         </Routes>
       </Router>
     </AuthProvider>
