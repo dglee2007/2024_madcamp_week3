@@ -45,12 +45,12 @@ function MainPage() {
     <main className="main-content">
       <img src={stockIllustration} alt="Stock Illustration" className="main-image" />
       <button className="play-button" onClick={handleStartGame}>Play</button>
+      <button className="logout-button" onClick={handleLogout}>Logout</button>
     </main>
     <div className="sidebar">
       <button className="sidebar-button" onClick={() => navigate('/how-to-play')}>How to Play</button>
       <button className="sidebar-button" onClick={() => navigate('/ranking')}>Ranking</button>
     </div>
-    <button className="logout-button" onClick={handleLogout}>Logout</button>
   </div>
   );
 }

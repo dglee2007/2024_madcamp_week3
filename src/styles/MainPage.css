@@ -59,6 +59,12 @@
     border-radius: 8px;
     cursor: pointer;
     margin: 10px;
+    position: relative; /* position 속성 추가 */
+    z-index: 10; /* z-index 속성 추가 */
+  }
+
+  .logout-button {
+    margin-bottom: -70px
   }
   
   .play-button:hover,
@@ -68,7 +74,7 @@
   
   .sidebar {
     position: absolute;
-    bottom: 20px;
+    bottom: 80px;
     right: 20px;
     display: flex;
     flex-direction: column;
