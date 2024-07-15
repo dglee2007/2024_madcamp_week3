@@ -1,12 +1,17 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://81dc-118-235-90-200.ngrok-free.app/api',
+  baseURL: 'https://d6c3-118-235-90-201.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': '69420',
   },
 });
+
+export const refreshAccessToken = async (refreshToken) => {
+  const response = await api.post('/auth/refresh-token', { refreshToken });
+  return response.data;
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
