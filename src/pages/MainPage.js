@@ -2,6 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { startGame, getGameState } from '../services/api';
+import '../styles/MainPage.css'
+import stockIllustration from '../assets/stock_illustration.png';
+import profilePic from '../assets/profile-pic.jpg';
+
 
 function MainPage() {
   const navigate = useNavigate();
@@ -30,12 +34,24 @@ function MainPage() {
   };
 
   return (
-    <div>
-      <h1>주식 거래 게임 메인 페이지</h1>
-      <p>환영합니다, {user.username}님!</p>
-      <button onClick={handleStartGame}>게임 시작</button>
-      <button onClick={handleLogout}>로그아웃</button>
+    <div className="main-page">
+    <header className="header">
+      <div className="logo">Madstocks</div>
+      <div className="welcome">Hello {user.username}</div>
+      <div className="profile">
+        <img src={profilePic} alt="Profile" />
+      </div>
+    </header>
+    <main className="main-content">
+      <img src={stockIllustration} alt="Stock Illustration" className="main-image" />
+      <button className="play-button" onClick={handleStartGame}>Play</button>
+    </main>
+    <div className="sidebar">
+      <button className="sidebar-button" onClick={() => navigate('/how-to-play')}>How to Play</button>
+      <button className="sidebar-button" onClick={() => navigate('/ranking')}>Ranking</button>
     </div>
+    <button className="logout-button" onClick={handleLogout}>Logout</button>
+  </div>
   );
 }
 
