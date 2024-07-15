@@ -1,4 +1,3 @@
-// src/contexts/GameContext.js
 import React, { createContext, useState } from 'react';
 
 export const GameContext = createContext();
@@ -9,7 +8,7 @@ export const GameProvider = ({ children }) => {
     userId: null,
     companies: [],
     investments: [],
-    balance: 1000000,
+    current_balance: 1000000, // 초기 잔액 설정
     currentYear: 2014,
   });
 

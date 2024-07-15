@@ -1,17 +1,18 @@
 import React from 'react';
 
-function CompanyIcons({ onIconClick }) {
-  const icons = Array.from({ length: 12 }, (_, i) => i + 1);
-
+function CompanyIcons({ companies, onIconClick }) {
   return (
     <div className="company-icons">
-      {icons.map((icon) => (
-        <img
-          key={icon}
-          src={`/assets/company${icon}.png`}
-          alt={`Company ${icon}`}
-          onClick={() => onIconClick(icon)}
-        />
+      {companies.map((company) => (
+        <div 
+          key={company.id} 
+          className="company-icon" 
+          onClick={() => onIconClick(company.id)}
+        >
+          <img src={`/assets/Company${company.id}.png`} alt={company.name} />
+          <p>{company.name}</p>
+          <p>${company.price}</p>
+        </div>
       ))}
     </div>
   );

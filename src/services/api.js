@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://c2c4-2001-e60-a30b-2429-3056-f958-ace0-4638.ngrok-free.app/api', // 백엔드 서버 주소에 맞게 수정
+  baseURL: 'https://81dc-118-235-90-200.ngrok-free.app/api',
+  headers: {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': '69420',
+  },
 });
 
 api.interceptors.request.use((config) => {
@@ -9,7 +13,19 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log('Request Config:', config); // 요청 설정 로깅
   return config;
+}, (error) => {
+  console.error('Request Error:', error);
+  return Promise.reject(error);
+});
+
+api.interceptors.response.use((response) => {
+  console.log('Response:', response); // 응답 로깅
+  return response;
+}, (error) => {
+  console.error('Response Error:', error.response || error);
+  return Promise.reject(error);
 });
 
 export default api;

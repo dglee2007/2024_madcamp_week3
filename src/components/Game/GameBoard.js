@@ -16,6 +16,7 @@ function GameBoard() {
   const [showStockChangeModal, setShowStockChangeModal] = useState(false);
   const [showGameResultModal, setShowGameResultModal] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,12 +25,12 @@ function GameBoard() {
 
   const startGame = async () => {
     try {
-      const userId = localStorage.getItem('userId'); // localStorage에서 userId를 가져옴
+      const userId = localStorage.getItem('userId');
       console.log('Starting game with userId:', userId);
       
       if (!userId) {
         console.error('No userId found. Please login again.');
-        // 여기서 로그인 페이지로 리다이렉트하는 로직을 추가할 수 있습니다.
+        navigate('/login');
         return;
       }
 
@@ -40,37 +41,64 @@ function GameBoard() {
         ...prevState, 
         userId,
         sessionId: response.data.sessionId,
-        companies: response.data.companies
+        companies: response.data.companies,
+        current_balance: parseFloat(response.data.start_balance),
+        current_year: 2014 // 시작 연도 설정
       }));
     } catch (error) {
       console.error('Failed to start game:', error.response ? error.response.data : error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleEndTurn = async () => {
     try {
+      setIsLoading(true);
       const response = await api.post(`/game/end-turn/${gameState.sessionId}`);
-      setGameState(prevState => ({ ...prevState, ...response.data }));
+      
+      const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
+      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+      
+      setGameState(prevState => ({ 
+        ...prevState, 
+        current_year: response.data.nextYear,
+        current_balance: parseFloat(response.data.newBalance),
+        stockChanges: stockChangesResponse.data,
+        companies: gameStateResponse.data.companies,
+        investments: gameStateResponse.data.investments
+      }));
+      
       setShowStockChangeModal(true);
       if (response.data.nextYear > 2023) {
         setShowGameResultModal(true);
       }
     } catch (error) {
       console.error('Failed to end turn:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleTrade = async (action, companyId, amount) => {
     try {
+      setIsLoading(true);
       const response = await api.post('/game/trade', {
         sessionId: gameState.sessionId,
         companyId,
         amount,
         action
       });
-      setGameState(prevState => ({ ...prevState, ...response.data }));
+
+      setGameState(prevState => ({ 
+        ...prevState, 
+        investments: response.data.investments,
+        current_balance: parseFloat(response.data.session.current_balance)
+      }));
     } catch (error) {
       console.error('Trade failed:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,17 +111,21 @@ function GameBoard() {
     navigate('/main');
   };
 
-  if (!gameState.sessionId) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="game-board">
-      <CompanyIcons companies={gameState.companies} onIconClick={handleNewsClick} />
-      <StockTable stocks={gameState.companies} />
-      <PortfolioTable portfolio={gameState.investments} />
-      <TradeButtons onTrade={handleTrade} />
-      <button onClick={handleEndTurn}>다음 턴</button>
+      <div className="header">
+        <h2>Current Balance: ${gameState.current_balance.toFixed(2)}</h2>
+        <h3>Current Year: {gameState.current_year}</h3>
+      </div>
+      <CompanyIcons companies={gameState.companies || []} onIconClick={handleNewsClick} />
+      <StockTable stocks={gameState.companies || []} />
+      <PortfolioTable portfolio={gameState.investments || []} />
+      <TradeButtons onTrade={handleTrade} companies={gameState.companies || []} />
+      <button onClick={handleEndTurn} disabled={isLoading}>다음 턴</button>
       {showNewsModal && (
         <NewsModal 
           onClose={() => setShowNewsModal(false)} 
@@ -104,13 +136,13 @@ function GameBoard() {
       {showStockChangeModal && (
         <StockChangeModal 
           onClose={() => setShowStockChangeModal(false)}
-          stockChanges={gameState.stockChanges}
+          stockChanges={gameState.stockChanges || []}
         />
       )}
       {showGameResultModal && (
         <GameResultModal 
           onClose={handleGameEnd}
-          finalBalance={gameState.currentBalance}
+          finalBalance={gameState.current_balance}
         />
       )}
     </div>

@@ -11,9 +11,9 @@ function StockTable({ stocks }) {
       </thead>
       <tbody>
         {stocks.map((stock) => (
-          <tr key={stock.id}>
+          <tr key={stock.company_id}>
             <td>{stock.name}</td>
-            <td>${stock.price}</td>
+            <td>${parseFloat(stock.price).toFixed(2)}</td>
           </tr>
         ))}
       </tbody>

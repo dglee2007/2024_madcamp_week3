@@ -15,7 +15,7 @@ function PortfolioTable({ portfolio }) {
           <tr key={item.company_id}>
             <td>{item.name}</td>
             <td>{item.amount}</td>
-            <td>${item.price_per_stock}</td>
+            <td>${parseFloat(item.price_per_stock).toFixed(2)}</td>
           </tr>
         ))}
       </tbody>

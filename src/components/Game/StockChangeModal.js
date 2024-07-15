@@ -17,32 +17,34 @@ function StockChangeModal({ onClose, sessionId }) {
     }
   };
 
-  return (
-    <div className="stock-change-modal">
-      <h2>Stock Price Changes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Company</th>
-            <th>Previous Price</th>
-            <th>Current Price</th>
-            <th>Change %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stockChanges.map((change) => (
-            <tr key={change.company_id}>
-              <td>{change.company_name}</td>
-              <td>${change.previous_price}</td>
-              <td>${change.current_price}</td>
-              <td>{change.change_percentage.toFixed(2)}%</td>
+  function StockChangeModal({ onClose, stockChanges }) {
+    return (
+      <div className="stock-change-modal">
+        <h2>Stock Price Changes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Previous Price</th>
+              <th>Current Price</th>
+              <th>Change %</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={onClose}>Close</button>
-    </div>
-  );
+          </thead>
+          <tbody>
+            {Array.isArray(stockChanges) && stockChanges.map((change) => (
+              <tr key={change.company_id}>
+                <td>{change.company_name}</td>
+                <td>${parseFloat(change.previous_price).toFixed(2)}</td>
+                <td>${parseFloat(change.current_price).toFixed(2)}</td>
+                <td>{parseFloat(change.change_percentage).toFixed(2)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button onClick={onClose}>Close</button>
+      </div>
+    );
+  }
 }
 
 export default StockChangeModal;
