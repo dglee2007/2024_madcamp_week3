@@ -1,23 +1,21 @@
 import React from 'react';
 
-const Portfolio = ({ investments }) => {
+const Portfolio = ({ investments, balance }) => {
   return (
     <div className="portfolio">
-      <h3>Your Portfolio</h3>
+      <h3>Current Balance: ${balance}</h3>
       <table>
         <thead>
           <tr>
             <th>Company</th>
-            <th>Shares</th>
-            <th>Purchase Price</th>
+            <th>Amount</th>
           </tr>
         </thead>
         <tbody>
-          {investments.map(investment => (
+          {investments.map((investment) => (
             <tr key={investment.company_id}>
               <td>{investment.name}</td>
               <td>{investment.amount}</td>
-              <td>${investment.price_per_stock.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

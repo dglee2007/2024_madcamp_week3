@@ -10,11 +10,6 @@ const HomePage = () => {
   const handleStartGame = async () => {
     try {
       console.log('Starting game for user:', user);
-      if (!user || !user.id) {
-        console.error('User ID is missing');
-        alert('User information is missing. Please log in again.');
-        return;
-      }
       const response = await startGame(user.id);
       console.log('Game started successfully:', response.data);
       

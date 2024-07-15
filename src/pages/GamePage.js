@@ -1,28 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import GameBoard from '../components/Game/GameBoard';
 import { getGameState } from '../services/api';
 
 const GamePage = () => {
   const { sessionId } = useParams();
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchGameState = async () => {
-      try {
-        const response = await getGameState(sessionId);
-        setGameState(response.data);
-      } catch (error) {
-        console.error('Failed to fetch game state:', error);
+  const fetchGameState = useCallback(async () => {
+    if (!sessionId) {
+      setError('Invalid session ID');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await getGameState(sessionId);
+      const newGameState = response.data;
+      setGameState(newGameState);
+      localStorage.setItem(`gameState_${sessionId}`, JSON.stringify(newGameState));
+      setError(null);
+    } catch (error) {
+      console.error('Failed to fetch game state:', error);
+      setError('Failed to load game state. Using cached data if available.');
+      const cachedGameState = localStorage.getItem(`gameState_${sessionId}`);
+      if (cachedGameState) {
+        setGameState(JSON.parse(cachedGameState));
       }
-    };
-
-    fetchGameState();
+    } finally {
+      setIsLoading(false);
+    }
   }, [sessionId]);
 
-  if (!gameState) return <div>Loading...</div>;
+  useEffect(() => {
+    fetchGameState();
+  }, [fetchGameState]);
 
-  return <GameBoard gameState={gameState} sessionId={sessionId} />;
+  if (isLoading) {
+    return <div>Loading game state...</div>;
+  }
+
+  if (error && !gameState) {
+    return (
+      <div>
+        <p>{error}</p>
+        <button onClick={fetchGameState}>Retry</button>
+        <button onClick={() => navigate('/')}>Return to Home</button>
+      </div>
+    );
+  }
+
+  return <GameBoard gameState={gameState} sessionId={sessionId} onUpdateGameState={fetchGameState} />;
 };
 
 export default GamePage;
