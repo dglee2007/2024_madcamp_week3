@@ -8,6 +8,11 @@ const api = axios.create({
   },
 });
 
+export const refreshAccessToken = async (refreshToken) => {
+  const response = await api.post('/auth/refresh-token', { refreshToken });
+  return response.data;
+};
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {

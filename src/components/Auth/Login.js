@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { GameContext } from '../../contexts/GameContext';  // GameContext를 import
 import api from '../../services/api';
+import '../../styles/Login.css';  // CSS 파일 import
+
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -27,24 +29,32 @@ function Login() {
     }
   };
 
+  const handleRegister = () => {
+    navigate('/Register');
+  };
+
   return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="login-container">
+      <h2>Let's Get Started!</h2>
+      <form onSubmit={handleLogin}>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="submit" className="login-button">Log In</button>
+        <button type="button" className="signup-button" onClick={handleRegister}>Sign Up</button>
+      </form>
+    </div>
   );
 }
 
