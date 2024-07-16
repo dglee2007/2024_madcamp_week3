@@ -29,6 +29,10 @@ function Login() {
     }
   };
 
+  const handleRegister = () => {
+    navigate('/Register');
+  };
+
   return (
     <div className="login-container">
       <h2>Let's Get Started!</h2>
@@ -48,7 +52,7 @@ function Login() {
           required
         />
         <button type="submit" className="login-button">Log In</button>
-        <button type="button" className="signup-button">Sign Up</button>
+        <button type="button" className="signup-button" onClick={handleRegister}>Sign Up</button>
       </form>
     </div>
   );

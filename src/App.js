@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { GameProvider } from './contexts/GameContext';  // GameProvider를 import
-import Login from './components/Auth/Login';
+//import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import MainMenu from './components/MainMenu';
 import GameBoard from './components/Game/GameBoard';
@@ -19,8 +19,8 @@ function App() {
       <GameProvider>  {/* GameProvider로 감싸기 */}
         <Router>
           <Routes>
-            <Route path="/" element={<LoginPageWrapper />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<LoginPageWrapper isLogin={true} />} /> {/* 로그인 경로 추가 */}
+            <Route path="/register" element={<Register isLogin={false} />} /> {/* 회원가입 경로 추가 */}
             <Route path="/main" element={<MainMenu />} />
             <Route path="/game" element={<GameBoard />} />
             <Route path="/profile" element={<UserProfile />} />

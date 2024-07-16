@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import profilePic from '../../assets/profile-pic.jpg';
 import stockIllustration from '../../assets/stock_illustration.png';
 import Login from './Login';  // Login 컴포넌트를 import
+import Register from './Register';  // Register 컴포넌트를 import
 import '../../styles/LoginPageWrapper.css';  // LoginPageWrapper.css 파일 import
 
-function LoginPageWrapper() {
+function LoginPageWrapper({isLogin}) {
   const navigate = useNavigate();
 
   return (
@@ -19,7 +20,7 @@ function LoginPageWrapper() {
       </header>
       <main className="main-content">
         <img src={stockIllustration} alt="Stock Illustration" className="main-image" />
-        <Login />
+        {isLogin ? <Login /> : <Register />}
         <button className="back-button" onClick={() => navigate('/')}>Back to Main</button>
       </main>
     </div>
