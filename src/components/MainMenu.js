@@ -24,7 +24,7 @@ function MainPage() {
       //console.log('Fetched game state:', gameStateData); // 로그 추가
 
       //navigate('/game-dashboard', { state: { gameState: startGameData } });
-      navigate('/game-board')
+      navigate('/game')
     } catch (error) {
       console.error('게임 시작 중 오류 발생:', error);
       alert('게임을 시작하는 데 실패했습니다.');

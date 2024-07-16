@@ -209,7 +209,7 @@ function GameBoard() {
   }
 
   return (
-    <div className="game-board">
+    <div className="game">
       <div className="header">
         <h1>Madstocks</h1>
         <h2>Hello User</h2>
