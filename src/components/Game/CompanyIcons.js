@@ -17,6 +17,9 @@ const companyIcons = {
 }
 
 function CompanyIcons({ companies, onIconClick, iconMapping }) {
+  console.log('Companies in CompanyIcons:', companies);
+  console.log('Icon mapping in CompanyIcons:', iconMapping);
+  
   return (
     <div className="company-icons-grid" style={{
       display: 'grid',
@@ -24,10 +27,10 @@ function CompanyIcons({ companies, onIconClick, iconMapping }) {
       gridTemplateColumns: `repeat(4, 1fr)`,
       gap: '10px'
     }}>
-      {companies.map((company, index) => (
-        <div key={company.id} onClick={() => onIconClick(company.id)}>
+      {companies.map((company) => (
+        <div key={company.company_id} onClick={() => onIconClick(company.company_id)}>
           <img 
-            src={companyIcons[iconMapping[company.id]?.replace('.png', '')] || companyIcons[`company${index + 1}`]} 
+            src={companyIcons[iconMapping[company.company_id]] || companyIcons.company1} 
             alt={company.name} 
             style={{width: '50px', height: '50px'}}
           />

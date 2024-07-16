@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
 import CompanyIcons from './CompanyIcons';
 import StockTable from './StockTable';
 import PortfolioTable from './PortfolioTable';
 import TradeForm from './TradeForm';
-import NewsModal from './NewsModal';
 import StockChangeModal from './StockChangeModal';
 import GameResultModal from './GameResultModal';
 import api from '../../services/api';
@@ -13,18 +12,30 @@ import './GameBoard.css';
 
 function GameBoard() {
   const { gameState, setGameState } = useContext(GameContext);
-  const [iconMapping, setIconMapping] = useState({});
-  const [showNewsModal, setShowNewsModal] = useState(false);
   const [showStockChangeModal, setShowStockChangeModal] = useState(false);
   const [showGameResultModal, setShowGameResultModal] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [portfolio, setPortfolio] = useState([]);
 
+  const updateGameState = useCallback((newState) => {
+    setGameState(prevState => ({
+      ...prevState,
+      ...newState,
+      companies: newState.companies ? newState.companies.map(company => ({
+        ...company,
+        company_id: company.id
+      })) : prevState.companies
+    }));
+  }, [setGameState]);
+
   useEffect(() => {
     startGame();
   }, []);
+
+  useEffect(() => {
+    console.log('Updated game state:', gameState);
+  }, [gameState]);
 
   const startGame = async () => {
     try {
@@ -40,21 +51,24 @@ function GameBoard() {
       const response = await api.post('/game/start-game', { userId });
       console.log('Game start response:', response.data);
       
-      // 아이콘 매핑 생성
       const newIconMapping = {};
       response.data.companies.forEach((company, index) => {
-        newIconMapping[company.company_id] = `company${index + 1}.png`;
+        newIconMapping[company.id] = `company${index + 1}`;
       });
-      setIconMapping(newIconMapping);
 
-      setGameState(prevState => ({ 
-        ...prevState, 
+      console.log('Initial companies:', response.data.companies);
+      console.log('Initial icon mapping:', newIconMapping);
+
+      updateGameState({
         userId,
         sessionId: response.data.sessionId,
         companies: response.data.companies,
         current_balance: parseFloat(response.data.start_balance),
-        current_year: 2014 // 시작 연도 설정
-      }));
+        current_year: 2014,
+        iconMapping: newIconMapping
+      });
+
+      await fetchPortfolio(response.data.sessionId);
     } catch (error) {
       console.error('Failed to start game:', error.response ? error.response.data : error.message);
     } finally {
@@ -76,26 +90,20 @@ function GameBoard() {
       const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
       console.log('Game state response:', gameStateResponse.data);
       
-      setGameState(prevState => ({ 
-        ...prevState, 
+      updateGameState({
         current_year: endTurnResponse.data.nextYear,
         current_balance: parseFloat(endTurnResponse.data.newBalance),
         stockChanges: stockChangesResponse.data,
-        companies: gameStateResponse.data.companies || [],
+        companies: gameStateResponse.data.companies,
         investments: gameStateResponse.data.investments || []
-      }));
-
-      // 아이콘 매핑 업데이트
-      const newIconMapping = {};
-      gameStateResponse.data.companies.forEach((company, index) => {
-        newIconMapping[company.company_id] = `company${index + 1}.png`;
       });
-      setIconMapping(newIconMapping);
 
       setShowStockChangeModal(true);
       if (endTurnResponse.data.nextYear > 2023) {
         setShowGameResultModal(true);
       }
+
+      await fetchPortfolio(gameState.sessionId);
     } catch (error) {
       console.error('Failed to end turn:', error);
     } finally {
@@ -103,18 +111,16 @@ function GameBoard() {
     }
   };
 
-  const fetchPortfolio = async () => {
+  const fetchPortfolio = async (sessionId) => {
     try {
-      const portfolioResponse = await api.get(`/game/portfolio/${gameState.sessionId}`);
+      const portfolioResponse = await api.get(`/game/portfolio/${sessionId}`);
       const portfolioData = portfolioResponse.data;
   
-      // 현재 회사 정보와 주가를 가져오기
-      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+      const gameStateResponse = await api.get(`/game/game-state/${sessionId}`);
       const companies = gameStateResponse.data.companies;
   
-      // 포트폴리오 정보 업데이트
       const updatedPortfolio = portfolioData.map(item => {
-        const company = companies.find(c => c.company_id === item.company_id);
+        const company = companies.find(c => c.id === item.company_id);
         return {
           ...item,
           current_price: company ? parseFloat(company.price) : 0
@@ -122,16 +128,7 @@ function GameBoard() {
       });
   
       setPortfolio(updatedPortfolio);
-      setGameState(prevState => ({
-        ...prevState,
-        companies: companies.map(company => ({
-          ...prevState.companies.find(c => c.company_id === company.company_id),
-          ...company
-        }))
-      }));
-  
-      console.log('Updated portfolio:', updatedPortfolio);
-      console.log('Updated companies:', companies);
+      updateGameState({ companies });
     } catch (error) {
       console.error('Failed to fetch portfolio:', error);
     }
@@ -150,12 +147,11 @@ function GameBoard() {
       
       console.log('Trade response:', response.data);
   
-      setGameState(prevState => ({
-        ...prevState,
+      updateGameState({
         current_balance: parseFloat(response.data.session.current_balance)
-      }));
+      });
       
-      await fetchPortfolio();  // 여기에 fetchPortfolio 호출 추가
+      await fetchPortfolio(gameState.sessionId);
     } catch (error) {
       console.error('Trade failed:', error.response ? error.response.data : error.message);
     } finally {
@@ -163,9 +159,45 @@ function GameBoard() {
     }
   };
 
-  const handleNewsClick = (companyId) => {
-    setSelectedCompany(companyId);
-    setShowNewsModal(true);
+  const handleNewsClick = async (companyId) => {
+    console.log('Clicked company ID:', companyId);
+    try {
+      const response = await api.get(`/game/news/${gameState.sessionId}/${companyId}/0`);
+      console.log('News response:', response.data);
+      const { news, remainingBalance } = response.data;
+
+      if (news) {
+        const newsWindow = window.open('', 'NewsWindow', 'width=400,height=300');
+        newsWindow.document.write(`
+          <html>
+            <head>
+              <title>Company News</title>
+            </head>
+            <body>
+              <h2>Company News</h2>
+              <p>${news.headline}</p>
+              <button onclick="fetchPremiumNews()">프리미엄 뉴스 보기</button>
+              <script>
+                async function fetchPremiumNews() {
+                  const response = await fetch('/game/news/${gameState.sessionId}/${companyId}/1');
+                  const data = await response.json();
+                  document.body.innerHTML += '<h3>프리미엄 뉴스</h3><p>' + data.news.content + '</p>';
+                }
+              </script>
+            </body>
+          </html>
+        `);
+      }
+
+      if (remainingBalance !== undefined) {
+        updateGameState({
+          current_balance: parseFloat(remainingBalance)
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch news:', error);
+      alert('뉴스를 가져오는데 실패했습니다.');
+    }
   };
 
   const handleGameEnd = () => {
@@ -189,7 +221,7 @@ function GameBoard() {
           <CompanyIcons 
             companies={gameState.companies || []} 
             onIconClick={handleNewsClick} 
-            iconMapping={iconMapping}
+            iconMapping={gameState.iconMapping || {}}
           />
           <StockTable stocks={gameState.companies || []} />
         </div>
@@ -205,13 +237,6 @@ function GameBoard() {
         </div>
       </div>
       <button className="next-turn-button" onClick={handleEndTurn} disabled={isLoading}>Next Session</button>
-      {showNewsModal && (
-        <NewsModal 
-          onClose={() => setShowNewsModal(false)} 
-          sessionId={gameState.sessionId}
-          companyId={selectedCompany}
-        />
-      )}
       {showStockChangeModal && (
         <StockChangeModal 
           onClose={() => setShowStockChangeModal(false)}
