@@ -7,6 +7,7 @@ import PortfolioTable from './PortfolioTable';
 import TradeForm from './TradeForm';
 import StockChangeModal from './StockChangeModal';
 import GameResultModal from './GameResultModal';
+import NewsPopup from './NewsPopup';  // 뉴스 팝업 컴포넌트 추가
 import api from '../../services/api';
 import './GameBoard.css';
 
@@ -14,6 +15,10 @@ function GameBoard() {
   const { gameState, setGameState } = useContext(GameContext);
   const [showStockChangeModal, setShowStockChangeModal] = useState(false);
   const [showGameResultModal, setShowGameResultModal] = useState(false);
+  const [showNewsPopup, setShowNewsPopup] = useState(false);  // 뉴스 팝업 상태 추가
+  const [selectedCompanyId, setSelectedCompanyId] = useState(null);  // 선택된 회사 ID 상태 추가
+  const [news, setNews] = useState({ headline: '', content: '' });
+  const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [portfolio, setPortfolio] = useState([]);
@@ -24,8 +29,8 @@ function GameBoard() {
       ...newState,
       companies: newState.companies ? newState.companies.map(company => ({
         ...company,
-        id: company.id, // Ensure `id` is set correctly
-        company_id: company.company_id, // Ensure `company_id` is set correctly
+        id: company.id,
+        company_id: company.company_id,
       })) : prevState.companies,
     }));
   }, [setGameState]);
@@ -65,7 +70,7 @@ function GameBoard() {
         sessionId: response.data.sessionId,
         companies: response.data.companies.map(c => ({
           ...c,
-          company_id: c.id, // Ensure `company_id` is set correctly
+          company_id: c.id,
           id: c.id,
         })),
         current_balance: parseFloat(response.data.start_balance),
@@ -164,35 +169,24 @@ function GameBoard() {
     }
   };
 
-  const handleNewsClick = async (companyId) => {
-    console.log('Clicked company ID:', companyId);
+  const handleNewsClick = (companyId) => {
+    setSelectedCompanyId(companyId);
+    setShowNewsPopup(true);
+  };
+
+  const fetchNews = async (companyId, isPremium) => {
+    console.log('Fetching news for company ID:', companyId, 'isPremium:', isPremium);
     try {
-      const response = await api.get(`/game/news/${gameState.sessionId}/${companyId}/0`);
+      const response = await api.get(`/game/news/${gameState.sessionId}/${companyId}/${isPremium ? 1 : 0}`);
       console.log('News response:', response.data);
       const { news, remainingBalance } = response.data;
 
-      if (news) {
-        const newsWindow = window.open('', 'NewsWindow', 'width=400,height=300');
-        newsWindow.document.write(`
-          <html>
-            <head>
-              <title>Company News</title>
-            </head>
-            <body>
-              <h2>Company News</h2>
-              <p>${news.headline}</p>
-              <button onclick="fetchPremiumNews()">프리미엄 뉴스 보기</button>
-              <script>
-                async function fetchPremiumNews() {
-                  const response = await fetch('/game/news/${gameState.sessionId}/${companyId}/1');
-                  const data = await response.json();
-                  document.body.innerHTML += '<h3>프리미엄 뉴스</h3><p>' + data.news.content + '</p>';
-                }
-              </script>
-            </body>
-          </html>
-        `);
-      }
+      setNews({
+        headline: news.headline,
+        content: news.content || '',
+      });
+      setIsPremium(isPremium);
+      setShowNewsPopup(true);  // 뉴스 선택 후 팝업 열기
 
       if (remainingBalance !== undefined) {
         updateGameState({
@@ -252,6 +246,20 @@ function GameBoard() {
         <GameResultModal 
           onClose={handleGameEnd}
           finalBalance={gameState.current_balance}
+        />
+      )}
+      {showNewsPopup && (
+        <NewsPopup 
+          isOpen={showNewsPopup}
+          companyId={selectedCompanyId}
+          headline={news.headline}
+          content={news.content}
+          isPremium={isPremium}
+          onClose={() => {
+            setShowNewsPopup(false);
+            setNews({ headline: '', content: '' });
+          }}
+          onSelect={fetchNews}
         />
       )}
     </div>
