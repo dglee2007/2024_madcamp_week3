@@ -89,7 +89,7 @@ function GameBoard() {
         newIconMapping[company.id] = `company${index + 1}`;
       });
 
-      const initialBalance = Number(response.data.start_balance) || 10000; // 기본값 설정
+      const initialBalance = Number(response.data.start_balance) || 1000; // 기본값 설정
 
       updateGameState({
         userId,
@@ -116,10 +116,26 @@ function GameBoard() {
 
   const handleEndTurn = async () => {
     if (gameState.current_year >= 2023) {
-      setShowGameResultPopup(true);
+      try {
+        setIsLoading(true);
+        console.log(`Ending game for sessionId: ${gameState.sessionId}`);
+        
+        const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
+        console.log('Final end turn response:', endTurnResponse.data);
+        
+        updateGameState({
+          current_balance: parseFloat(endTurnResponse.data.finalBalance),
+        });
+  
+        setShowGameResultPopup(true);
+      } catch (error) {
+        console.error('Failed to end game:', error);
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
-
+  
     try {
       setIsLoading(true);
       console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
@@ -140,9 +156,9 @@ function GameBoard() {
         companies: gameStateResponse.data.companies,
         investments: gameStateResponse.data.investments || [],
       });
-
+  
       await fetchPortfolio(gameState.sessionId);
-
+  
       setShowStockChangePopup(true);
     } catch (error) {
       console.error('Failed to end turn:', error);
@@ -150,6 +166,7 @@ function GameBoard() {
       setIsLoading(false);
     }
   };
+  
 
   const handleRestart = async () => {
     setShowGameResultPopup(false);
@@ -245,7 +262,7 @@ function GameBoard() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <div className="game">
       <div className="header">
@@ -312,6 +329,7 @@ function GameBoard() {
       )}
     </div>
   );
+  
 }
 
 export default GameBoard;
