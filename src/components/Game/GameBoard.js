@@ -24,8 +24,9 @@ function GameBoard() {
       ...newState,
       companies: newState.companies ? newState.companies.map(company => ({
         ...company,
-        company_id: company.id
-      })) : prevState.companies
+        id: company.id, // Ensure `id` is set correctly
+        company_id: company.company_id, // Ensure `company_id` is set correctly
+      })) : prevState.companies,
     }));
   }, [setGameState]);
 
@@ -62,10 +63,14 @@ function GameBoard() {
       updateGameState({
         userId,
         sessionId: response.data.sessionId,
-        companies: response.data.companies,
+        companies: response.data.companies.map(c => ({
+          ...c,
+          company_id: c.id, // Ensure `company_id` is set correctly
+          id: c.id,
+        })),
         current_balance: parseFloat(response.data.start_balance),
         current_year: 2014,
-        iconMapping: newIconMapping
+        iconMapping: newIconMapping,
       });
 
       await fetchPortfolio(response.data.sessionId);
@@ -95,7 +100,7 @@ function GameBoard() {
         current_balance: parseFloat(endTurnResponse.data.newBalance),
         stockChanges: stockChangesResponse.data,
         companies: gameStateResponse.data.companies,
-        investments: gameStateResponse.data.investments || []
+        investments: gameStateResponse.data.investments || [],
       });
 
       setShowStockChangeModal(true);
@@ -115,18 +120,18 @@ function GameBoard() {
     try {
       const portfolioResponse = await api.get(`/game/portfolio/${sessionId}`);
       const portfolioData = portfolioResponse.data;
-  
+
       const gameStateResponse = await api.get(`/game/game-state/${sessionId}`);
       const companies = gameStateResponse.data.companies;
-  
+
       const updatedPortfolio = portfolioData.map(item => {
         const company = companies.find(c => c.id === item.company_id);
         return {
           ...item,
-          current_price: company ? parseFloat(company.price) : 0
+          current_price: company ? parseFloat(company.price) : 0,
         };
       });
-  
+
       setPortfolio(updatedPortfolio);
       updateGameState({ companies });
     } catch (error) {
@@ -140,15 +145,15 @@ function GameBoard() {
       console.log(`Trading: action=${action}, companyId=${companyId}, amount=${amount}, sessionId=${gameState.sessionId}`);
       const response = await api.post('/game/trade', {
         sessionId: gameState.sessionId,
-        companyId: companyId,
+        companyId,
         amount,
-        action
+        action,
       });
       
       console.log('Trade response:', response.data);
   
       updateGameState({
-        current_balance: parseFloat(response.data.session.current_balance)
+        current_balance: parseFloat(response.data.session.current_balance),
       });
       
       await fetchPortfolio(gameState.sessionId);
@@ -191,7 +196,7 @@ function GameBoard() {
 
       if (remainingBalance !== undefined) {
         updateGameState({
-          current_balance: parseFloat(remainingBalance)
+          current_balance: parseFloat(remainingBalance),
         });
       }
     } catch (error) {
