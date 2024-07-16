@@ -1,5 +1,3 @@
-// components/Game/GameBoard.js
-
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
@@ -7,6 +5,7 @@ import CompanyIcons from './CompanyIcons';
 import StockTable from './StockTable';
 import PortfolioTable from './PortfolioTable';
 import TradeForm from './TradeForm';
+import StockChangePopup from './StockChangePopup';
 import GameResultPopup from './GameResultPopup';
 import NewsPopup from './NewsPopup';
 import api from '../../services/api';
@@ -16,6 +15,7 @@ function GameBoard() {
   const { gameState, setGameState } = useContext(GameContext);
   const [showGameResultPopup, setShowGameResultPopup] = useState(false);
   const [showNewsPopup, setShowNewsPopup] = useState(false);
+  const [showStockChangePopup, setShowStockChangePopup] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [news, setNews] = useState({ headline: '', content: '' });
   const [isPremium, setIsPremium] = useState(false);
@@ -116,36 +116,38 @@ function GameBoard() {
 
   const handleEndTurn = async () => {
     if (gameState.current_year >= 2023) {
-      // 게임 종료: 결과 팝업 표시
       setShowGameResultPopup(true);
-    } else {
-      try {
-        setIsLoading(true);
-        console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
-        
-        const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
-        console.log('End turn response:', endTurnResponse.data);
-        
-        const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
-        console.log('Stock changes response:', stockChangesResponse.data);
-        
-        const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
-        console.log('Game state response:', gameStateResponse.data);
-        
-        updateGameState({
-          current_year: endTurnResponse.data.nextYear,
-          current_balance: parseFloat(endTurnResponse.data.newBalance),
-          stockChanges: stockChangesResponse.data,
-          companies: gameStateResponse.data.companies,
-          investments: gameStateResponse.data.investments || [],
-        });
+      return;
+    }
 
-        await fetchPortfolio(gameState.sessionId);
-      } catch (error) {
-        console.error('Failed to end turn:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    try {
+      setIsLoading(true);
+      console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
+      
+      const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
+      console.log('End turn response:', endTurnResponse.data);
+      
+      const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
+      console.log('Stock changes response:', stockChangesResponse.data);
+      
+      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+      console.log('Game state response:', gameStateResponse.data);
+      
+      updateGameState({
+        current_year: endTurnResponse.data.nextYear,
+        current_balance: parseFloat(endTurnResponse.data.newBalance),
+        stockChanges: stockChangesResponse.data,
+        companies: gameStateResponse.data.companies,
+        investments: gameStateResponse.data.investments || [],
+      });
+
+      await fetchPortfolio(gameState.sessionId);
+
+      setShowStockChangePopup(true);
+    } catch (error) {
+      console.error('Failed to end turn:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -161,8 +163,6 @@ function GameBoard() {
   const handleLogoClick = () => {
     navigate('/main');
   };
-
-
 
   const fetchPortfolio = async (sessionId) => {
     try {
@@ -301,6 +301,13 @@ function GameBoard() {
             setNews({ headline: '', content: '' });
           }}
           onSelect={fetchNews}
+        />
+      )}
+      {showStockChangePopup && (
+        <StockChangePopup 
+          isOpen={showStockChangePopup}
+          onClose={() => setShowStockChangePopup(false)}
+          stockChanges={gameState.stockChanges}
         />
       )}
     </div>
