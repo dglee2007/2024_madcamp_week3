@@ -17,7 +17,13 @@
     cursor: pointer;
     flex: 1;
     transition: background-color 0.3s;
+    color: #000; /* 기본 텍스트 색상 설정 */
   }
+
+  .tab:hover {
+    background-color: #e2e6ea; /* 비활성화된 탭에 hover 효과 추가 */
+  }
+  
   
   .tab.active {
     background-color: #007bff;

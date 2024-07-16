@@ -15,18 +15,27 @@
   }
   
   .news-popup.open {
+    
     visibility: visible;
     opacity: 1;
   }
   
   .news-popup-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
+    width: 33.33%; /* 화면의 1/3 */
+  height: 33.33%; /* 화면의 1/3 */
+  background-image: url('../../assets/breaking_news.png');
+  background-size: cover; /* 이미지가 팝업 크기에 맞추어 전체적으로 커버되도록 합니다 */
+  background-position: center; /* 이미지가 중앙에 위치하도록 합니다 */
+  background-repeat: no-repeat;
+  background-color: rgba(255, 255, 255, 0.9); /* 배경을 반투명하게 설정하여 이미지와 구분 */
+  padding: 140px 20px; /* 위쪽에 더 많은 패딩을 추가하여 전체 내용을 아래로 내립니다 */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  
   }
   
   .news-popup-content button {
-    margin: 10px;
+    margin: 40px;
   }
   

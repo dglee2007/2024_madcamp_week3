@@ -3,8 +3,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import profilePic from '../../assets/profile-pic.jpg';
 import stockIllustration from '../../assets/stock_illustration.png';
-import Login from './Login';  
-import Register from './Register';  
+import Login from './Login';
+import Register from './Register';
 import '../../styles/LoginPageWrapper.css';
 
 function LoginPageWrapper({ isLogin }) {
@@ -21,8 +21,9 @@ function LoginPageWrapper({ isLogin }) {
       </header>
       <main className="main-content">
         <img src={stockIllustration} alt="Stock Illustration" className="main-image" />
-        {isLogin ? <Login /> : <Register />}
-        <button className="back-button" onClick={() => navigate('/')}>Back to Main</button>
+        <div className="auth-container">
+          {isLogin ? <Login /> : <Register />}
+        </div>
       </main>
     </div>
   );

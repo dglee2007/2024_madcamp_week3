@@ -5,7 +5,6 @@ function NewsPopup({ isOpen, companyId, headline, content, isPremium, onClose, o
   return (
     <div className={`news-popup ${isOpen ? 'open' : ''}`}>
       <div className="news-popup-content">
-        <h2>뉴스 열람</h2>
         {headline ? (
           <div>
             <h3>{headline}</h3>
