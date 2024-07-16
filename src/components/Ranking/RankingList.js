@@ -1,70 +1,85 @@
+// src/components/Ranking/RankingList.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '../../styles/RankingList.css';
 import api from '../../services/api';
 
-function RankingList() {
-  const [topProfitRate, setTopProfitRate] = useState([]);
-  const [topCumulativeProfit, setTopCumulativeProfit] = useState([]);
+
+const RankingList = () => {
+  const [activeTab, setActiveTab] = useState('single');
+  const [singleRanking, setSingleRanking] = useState([]);
+  const [cumulativeRanking, setCumulativeRanking] = useState([]);
 
   useEffect(() => {
-    fetchRankings();
+    fetchSingleRanking();
+    fetchCumulativeRanking();
   }, []);
 
-  const fetchRankings = async () => {
+  const fetchSingleRanking = async () => {
     try {
-      const profitRateResponse = await api.get('/ranking/top-profit-rate');
-      const cumulativeProfitResponse = await api.get('/ranking/top-cumulative-profit');
-      setTopProfitRate(profitRateResponse.data);
-      setTopCumulativeProfit(cumulativeProfitResponse.data);
+      const response = await api.get('/ranking/top-profit-rate');
+      setSingleRanking(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error('Failed to fetch rankings:', error);
+      console.error('Error fetching single game ranking:', error);
+      setSingleRanking([]);
+    }
+  };
+  
+  const fetchCumulativeRanking = async () => {
+    try {
+      const response = await api.get('/ranking/top-cumulative-profit');
+      setCumulativeRanking(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Error fetching cumulative ranking:', error);
+      setCumulativeRanking([]);
+    }
+  };
+
+  const getMedal = (index) => {
+    switch(index) {
+      case 0: return '🥇';
+      case 1: return '🥈';
+      case 2: return '🥉';
+      default: return '';
     }
   };
 
   return (
-    <div className="ranking-list">
-      <h2>Rankings</h2>
-      <h3>Top Profit Rate</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th>Profit Rate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {topProfitRate.map((user, index) => (
-            <tr key={user.username}>
-              <td>{index + 1}</td>
-              <td>{user.username}</td>
-              <td>{user.best_profit_rate}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h3>Top Cumulative Profit</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th>Cumulative Profit Rate</th>
-            <th>Total Games</th>
-          </tr>
-        </thead>
-        <tbody>
-          {topCumulativeProfit.map((user, index) => (
-            <tr key={user.username}>
-              <td>{index + 1}</td>
-              <td>{user.username}</td>
-              <td>{user.cumulative_profit_rate}%</td>
-              <td>{user.total_games}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="ranking-container">
+      <div className="tab-container">
+        <button 
+          className={`tab ${activeTab === 'single' ? 'active' : ''}`} 
+          onClick={() => setActiveTab('single')}>
+          단일 게임 랭킹
+        </button>
+        <button 
+          className={`tab ${activeTab === 'cumulative' ? 'active' : ''}`} 
+          onClick={() => setActiveTab('cumulative')}>
+          누적 수익률 랭킹
+        </button>
+      </div>
+      <ul className="ranking-list">
+        {activeTab === 'single' ? (
+          singleRanking.map((item, index) => (
+            <li key={index} className="ranking-item">
+              <span className="medal">{getMedal(index)}</span>
+              <span className="username">{item.username}</span>
+              <span className="profit-rate">{parseFloat(item.best_profit_rate).toFixed(2)}%</span>
+            </li>
+          ))
+        ) : (
+          cumulativeRanking.map((item, index) => (
+            <li key={index} className="ranking-item">
+              <span className="medal">{getMedal(index)}</span>
+              <span className="username">{item.username}</span>
+              <span className="profit-rate">{parseFloat(item.cumulative_profit_rate).toFixed(2)}%</span>
+              <span className="total-games">({item.total_games}게임)</span>
+            </li>
+          ))
+        )}
+      </ul>
     </div>
   );
-}
+};
 
 export default RankingList;

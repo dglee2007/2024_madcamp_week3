@@ -1,0 +1,65 @@
+.ranking-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .tab-container {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.3s;
+  }
+  
+  .tab.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .ranking-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .ranking-item {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+  }
+  
+  .ranking-item:hover {
+    background-color: #e9ecef;
+  }
+  
+  .medal {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .username {
+    flex: 1;
+    font-weight: bold;
+  }
+  
+  .profit-rate {
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .total-games {
+    margin-left: 10px;
+    color: #6c757d;
+  }

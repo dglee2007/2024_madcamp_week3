@@ -95,3 +95,12 @@
     background-color: #3700b3;
   }
   
+
+  .logout-button {
+    margin-top: auto; /* 이 버튼을 맨 아래로 밀어냅니다 */
+    background-color: #dc3545; /* 로그아웃 버튼에 다른 색상을 줍니다 */
+  }
+
+  .logout-button:hover {
+    background-color: #c82333;
+  }

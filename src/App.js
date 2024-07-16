@@ -9,7 +9,7 @@ import UserProfile from './components/Profile/UserProfile';
 import RankingList from './components/Ranking/RankingList';
 import GameInstructions from './components/GameInstructions';
 import LoginPageWrapper from './components/Auth/LoginPageWrapper';
-
+import RankingPage from './components/RankingPage'
 
 
 function App() {
@@ -26,6 +26,8 @@ function App() {
             <Route path="/ranking" element={<RankingList />} />
             <Route path="/how-to-play" element={<GameInstructions />} />
             <Route path="/profile/:userId" element={<UserProfile />} />
+            <Route path="/ranking" element={<RankingPage />} />
+
 
           </Routes>
         </Router>

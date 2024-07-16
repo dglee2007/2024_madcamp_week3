@@ -2,10 +2,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-
 import '../styles/MainMenu.css';
 import stockIllustration from '../assets/stock_illustration.png';
-import profilePic from '../assets/profile-pic.jpg';
+import profilePic from '../assets/profile-pic.jpg'; // profilePic import 추가
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -26,17 +25,17 @@ const MainMenu = () => {
     }
   };
 
-  const handleProfileClick = () => {
-    navigate(`/profile/${user.id}`);  // user.id는 현재 로그인한 사용자의 ID
-  };
-
   const handleLogoClick = () => {
     navigate('/main');
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleProfileClick = () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    } else {
+      console.error('User ID not found');
+    }
   };
 
   if (loading) {
@@ -44,7 +43,7 @@ const MainMenu = () => {
   }
 
   if (!user) {
-    return null; // 로딩 중이 아니고 사용자 정보가 없으면 아무것도 렌더링하지 않음
+    return null;
   }
 
   return (
@@ -59,11 +58,11 @@ const MainMenu = () => {
       <main className="main-content">
         <img src={stockIllustration} alt="Stock Illustration" className="main-image" />
         <button className="play-button" onClick={handleStartGame}>Play</button>
-        <button className="logout-button" onClick={handleLogout}>Logout</button>
       </main>
       <div className="sidebar">
         <button className="sidebar-button" onClick={() => navigate('/how-to-play')}>How to Play</button>
         <button className="sidebar-button" onClick={() => navigate('/ranking')}>Ranking</button>
+        <button className="sidebar-button logout-button" onClick={logout}>Logout</button>
       </div>
     </div>
   );

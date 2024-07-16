@@ -1,17 +1,20 @@
 // src/components/UserProfile.js
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/UserProfile.css';
+import '../../styles/UserProfile.css';
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const { userId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`https://bbbc-118-235-90-8.ngrok-free.app/api/profile/${userId}`);
+        const response = await axios.get(`/profile/${userId}`, {
+          withCredentials: true
+        });
         setProfileData(response.data);
       } catch (error) {
         console.error('프로필 데이터 가져오기 실패:', error);
@@ -19,7 +22,7 @@ const UserProfile = () => {
     };
 
     fetchProfileData();
-  }, [userId]);
+  }, [userId, navigate]);
 
   if (!profileData) return <div>Loading...</div>;
 
