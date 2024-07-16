@@ -23,7 +23,7 @@ function App() {
             <Route path="/game" element={<GameBoard />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/ranking" element={<RankingList />} />
-            <Route path="/instructions" element={<GameInstructions />} />
+            <Route path="/how-to-play" element={<GameInstructions />} />
           </Routes>
         </Router>
       </GameProvider>
