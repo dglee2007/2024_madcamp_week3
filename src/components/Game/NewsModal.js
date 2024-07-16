@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { GameContext } from '../../contexts/GameContext';
 import api from '../../services/api';
 import '../../styles/NewsModal.css';
@@ -8,6 +8,12 @@ function NewsModal({ onClose, sessionId, companyId }) {
   const [newsContent, setNewsContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (companyId && sessionId) {
+      fetchNews(false);
+    }
+  }, [companyId, sessionId]);
 
   const fetchNews = async (isPremium) => {
     setIsLoading(true);
@@ -51,18 +57,20 @@ function NewsModal({ onClose, sessionId, companyId }) {
 
   return (
     <div className="news-modal">
-      <h2>Company News</h2>
-      <button onClick={() => fetchNews(false)} disabled={isLoading}>일반 뉴스</button>
-      <button onClick={() => fetchNews(true)} disabled={isLoading}>프리미엄 뉴스</button>
-      {isLoading && <p>로딩 중...</p>}
-      {error && <p className="error">{error}</p>}
-      {newsContent && (
-        <div className="news-content">
-          <h3>뉴스 내용:</h3>
-          <p>{newsContent}</p>
-        </div>
-      )}
-      <button onClick={onClose}>닫기</button>
+      <div className="modal-content">
+        <h2>Company News</h2>
+        <button onClick={() => fetchNews(false)} disabled={isLoading}>일반 뉴스</button>
+        <button onClick={() => fetchNews(true)} disabled={isLoading}>프리미엄 뉴스</button>
+        {isLoading && <p>로딩 중...</p>}
+        {error && <p className="error">{error}</p>}
+        {newsContent && (
+          <div className="news-content">
+            <h3>뉴스 내용:</h3>
+            <p>{newsContent}</p>
+          </div>
+        )}
+        <button onClick={onClose}>닫기</button>
+      </div>
     </div>
   );
 }

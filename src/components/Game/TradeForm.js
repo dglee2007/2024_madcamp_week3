@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { useContext } from 'react';
-import { GameContext } from '../../contexts/GameContext';
 
-function TradeButtons({ onTrade }) {
-  const { gameState } = useContext(GameContext);
-  const [selectedCompany, setSelectedCompany] = useState('');
+function TradeForm({ companies, onTrade }) {
+  const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [amount, setAmount] = useState(0);
 
   const handleTrade = (action) => {
-    if (selectedCompany && amount > 0) {
-      onTrade(action, selectedCompany, amount);
-      setSelectedCompany('');
+    if (selectedCompanyId && amount > 0) {
+      console.log(`Calling onTrade: action=${action}, companyId=${selectedCompanyId}, amount=${amount}`);
+      onTrade(action, selectedCompanyId, parseInt(amount, 10));
+      setSelectedCompanyId('');
       setAmount(0);
     } else {
       alert('회사와 수량을 선택해 주세요.');
@@ -18,14 +16,14 @@ function TradeButtons({ onTrade }) {
   };
 
   return (
-    <div className="trade-buttons">
+    <div className="trade-form">
       <select
-        value={selectedCompany}
-        onChange={(e) => setSelectedCompany(e.target.value)}
+        value={selectedCompanyId}
+        onChange={(e) => setSelectedCompanyId(e.target.value)}
       >
         <option value="">Select a company</option>
-        {gameState.companies.map((company) => (
-          <option key={company.id} value={company.id}>
+        {companies.map((company) => (
+          <option key={company.company_id} value={company.company_id}>
             {company.name}
           </option>
         ))}
@@ -35,6 +33,7 @@ function TradeButtons({ onTrade }) {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         placeholder="Amount"
+        min="1"
       />
       <button onClick={() => handleTrade('buy')}>Buy</button>
       <button onClick={() => handleTrade('sell')}>Sell</button>
@@ -42,4 +41,4 @@ function TradeButtons({ onTrade }) {
   );
 }
 
-export default TradeButtons;
+export default TradeForm;

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
+import './StockChangeModal.css';
 
 function StockChangeModal({ onClose, sessionId }) {
   const [stockChanges, setStockChanges] = useState([]);
 
   useEffect(() => {
     fetchStockChanges();
-  }, []);
+  }, [sessionId]);
 
   const fetchStockChanges = async () => {
     try {
@@ -17,9 +18,9 @@ function StockChangeModal({ onClose, sessionId }) {
     }
   };
 
-  function StockChangeModal({ onClose, stockChanges }) {
-    return (
-      <div className="stock-change-modal">
+  return (
+    <div className="stock-change-modal">
+      <div className="modal-content">
         <h2>Stock Price Changes</h2>
         <table>
           <thead>
@@ -43,8 +44,8 @@ function StockChangeModal({ onClose, sessionId }) {
         </table>
         <button onClick={onClose}>Close</button>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default StockChangeModal;

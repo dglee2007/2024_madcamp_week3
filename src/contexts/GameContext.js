@@ -8,7 +8,7 @@ export const GameProvider = ({ children }) => {
     userId: null,
     companies: [],
     investments: [],
-    current_balance: 1000000, // 초기 잔액 설정
+    current_balance: 1000, // 초기 잔액 설정
     currentYear: 2014,
   });
 

@@ -1,14 +1,12 @@
+// GameResultModal.js
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-function GameResultModal({ finalBalance }) {
-  const navigate = useNavigate();
-
+function GameResultModal({ onClose, finalBalance }) {
   return (
     <div className="game-result-modal">
-      <h2>Game Over</h2>
-      <p>Your final balance: ${finalBalance}</p>
-      <button onClick={() => navigate('/main')}>Back to Main Menu</button>
+      <h2>게임 종료</h2>
+      <p>최종 잔액: ${finalBalance.toFixed(2)}</p>
+      <button onClick={onClose}>닫기</button>
     </div>
   );
 }

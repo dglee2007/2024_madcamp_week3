@@ -4,20 +4,23 @@ import { GameContext } from '../../contexts/GameContext';
 import CompanyIcons from './CompanyIcons';
 import StockTable from './StockTable';
 import PortfolioTable from './PortfolioTable';
-import TradeButtons from './TradeButtons';
+import TradeForm from './TradeForm';
 import NewsModal from './NewsModal';
 import StockChangeModal from './StockChangeModal';
 import GameResultModal from './GameResultModal';
 import api from '../../services/api';
+import './GameBoard.css';
 
 function GameBoard() {
   const { gameState, setGameState } = useContext(GameContext);
+  const [iconMapping, setIconMapping] = useState({});
   const [showNewsModal, setShowNewsModal] = useState(false);
   const [showStockChangeModal, setShowStockChangeModal] = useState(false);
   const [showGameResultModal, setShowGameResultModal] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [portfolio, setPortfolio] = useState([]);
 
   useEffect(() => {
     startGame();
@@ -37,6 +40,13 @@ function GameBoard() {
       const response = await api.post('/game/start-game', { userId });
       console.log('Game start response:', response.data);
       
+      // 아이콘 매핑 생성
+      const newIconMapping = {};
+      response.data.companies.forEach((company, index) => {
+        newIconMapping[company.company_id] = `company${index + 1}.png`;
+      });
+      setIconMapping(newIconMapping);
+
       setGameState(prevState => ({ 
         ...prevState, 
         userId,
@@ -55,22 +65,35 @@ function GameBoard() {
   const handleEndTurn = async () => {
     try {
       setIsLoading(true);
-      const response = await api.post(`/game/end-turn/${gameState.sessionId}`);
+      console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
+      
+      const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
+      console.log('End turn response:', endTurnResponse.data);
       
       const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
+      console.log('Stock changes response:', stockChangesResponse.data);
+      
       const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+      console.log('Game state response:', gameStateResponse.data);
       
       setGameState(prevState => ({ 
         ...prevState, 
-        current_year: response.data.nextYear,
-        current_balance: parseFloat(response.data.newBalance),
+        current_year: endTurnResponse.data.nextYear,
+        current_balance: parseFloat(endTurnResponse.data.newBalance),
         stockChanges: stockChangesResponse.data,
-        companies: gameStateResponse.data.companies,
-        investments: gameStateResponse.data.investments
+        companies: gameStateResponse.data.companies || [],
+        investments: gameStateResponse.data.investments || []
       }));
-      
+
+      // 아이콘 매핑 업데이트
+      const newIconMapping = {};
+      gameStateResponse.data.companies.forEach((company, index) => {
+        newIconMapping[company.company_id] = `company${index + 1}.png`;
+      });
+      setIconMapping(newIconMapping);
+
       setShowStockChangeModal(true);
-      if (response.data.nextYear > 2023) {
+      if (endTurnResponse.data.nextYear > 2023) {
         setShowGameResultModal(true);
       }
     } catch (error) {
@@ -80,23 +103,61 @@ function GameBoard() {
     }
   };
 
+  const fetchPortfolio = async () => {
+    try {
+      const portfolioResponse = await api.get(`/game/portfolio/${gameState.sessionId}`);
+      const portfolioData = portfolioResponse.data;
+  
+      // 현재 회사 정보와 주가를 가져오기
+      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+      const companies = gameStateResponse.data.companies;
+  
+      // 포트폴리오 정보 업데이트
+      const updatedPortfolio = portfolioData.map(item => {
+        const company = companies.find(c => c.company_id === item.company_id);
+        return {
+          ...item,
+          current_price: company ? parseFloat(company.price) : 0
+        };
+      });
+  
+      setPortfolio(updatedPortfolio);
+      setGameState(prevState => ({
+        ...prevState,
+        companies: companies.map(company => ({
+          ...prevState.companies.find(c => c.company_id === company.company_id),
+          ...company
+        }))
+      }));
+  
+      console.log('Updated portfolio:', updatedPortfolio);
+      console.log('Updated companies:', companies);
+    } catch (error) {
+      console.error('Failed to fetch portfolio:', error);
+    }
+  };
+
   const handleTrade = async (action, companyId, amount) => {
     try {
       setIsLoading(true);
+      console.log(`Trading: action=${action}, companyId=${companyId}, amount=${amount}, sessionId=${gameState.sessionId}`);
       const response = await api.post('/game/trade', {
         sessionId: gameState.sessionId,
-        companyId,
+        companyId: companyId,
         amount,
         action
       });
-
-      setGameState(prevState => ({ 
-        ...prevState, 
-        investments: response.data.investments,
+      
+      console.log('Trade response:', response.data);
+  
+      setGameState(prevState => ({
+        ...prevState,
         current_balance: parseFloat(response.data.session.current_balance)
       }));
+      
+      await fetchPortfolio();  // 여기에 fetchPortfolio 호출 추가
     } catch (error) {
-      console.error('Trade failed:', error);
+      console.error('Trade failed:', error.response ? error.response.data : error.message);
     } finally {
       setIsLoading(false);
     }
@@ -118,14 +179,32 @@ function GameBoard() {
   return (
     <div className="game-board">
       <div className="header">
-        <h2>Current Balance: ${gameState.current_balance.toFixed(2)}</h2>
+        <h1>Madstocks</h1>
+        <h2>Hello User</h2>
+        <h3>Current Balance: ${gameState.current_balance.toFixed(2)}</h3>
         <h3>Current Year: {gameState.current_year}</h3>
       </div>
-      <CompanyIcons companies={gameState.companies || []} onIconClick={handleNewsClick} />
-      <StockTable stocks={gameState.companies || []} />
-      <PortfolioTable portfolio={gameState.investments || []} />
-      <TradeButtons onTrade={handleTrade} companies={gameState.companies || []} />
-      <button onClick={handleEndTurn} disabled={isLoading}>다음 턴</button>
+      <div className="main-content">
+        <div className="left-section">
+          <CompanyIcons 
+            companies={gameState.companies || []} 
+            onIconClick={handleNewsClick} 
+            iconMapping={iconMapping}
+          />
+          <StockTable stocks={gameState.companies || []} />
+        </div>
+        <div className="right-section">
+          <PortfolioTable 
+            portfolio={portfolio} 
+            companies={gameState.companies || []}
+          />
+          <TradeForm 
+            companies={gameState.companies || []} 
+            onTrade={handleTrade} 
+          />
+        </div>
+      </div>
+      <button className="next-turn-button" onClick={handleEndTurn} disabled={isLoading}>Next Session</button>
       {showNewsModal && (
         <NewsModal 
           onClose={() => setShowNewsModal(false)} 
@@ -136,7 +215,7 @@ function GameBoard() {
       {showStockChangeModal && (
         <StockChangeModal 
           onClose={() => setShowStockChangeModal(false)}
-          stockChanges={gameState.stockChanges || []}
+          sessionId={gameState.sessionId}
         />
       )}
       {showGameResultModal && (

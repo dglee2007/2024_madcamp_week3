@@ -1,0 +1,49 @@
+.game-board {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .main-content {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .left-section {
+    flex: 2;
+  }
+  
+  .right-section {
+    flex: 1;
+  }
+  
+  .next-turn-button {
+    align-self: flex-end;
+    margin-top: 20px;
+  }
+  
+  .company-icons-grid {
+    margin-bottom: 20px;
+  }
+  
+  .stock-table, .portfolio-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .stock-table th, .stock-table td, .portfolio-table th, .portfolio-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .stock-table th, .portfolio-table th {
+    background-color: #f2f2f2;
+  }
