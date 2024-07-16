@@ -26,6 +26,10 @@ const MainMenu = () => {
     }
   };
 
+  const handleProfileClick = () => {
+    navigate(`/profile/${user.id}`);  // user.id는 현재 로그인한 사용자의 ID
+  };
+
   const handleLogoClick = () => {
     navigate('/main');
   };
@@ -48,7 +52,7 @@ const MainMenu = () => {
       <header className="header">
         <h1 onClick={handleLogoClick} style={{ cursor: 'pointer' }}>MadStocks</h1>
         <div className="welcome">Hello {user.username}</div>
-        <div className="profile">
+        <div className="profile" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
           <img src={profilePic} alt="Profile" />
         </div>
       </header>

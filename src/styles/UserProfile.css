@@ -1,0 +1,64 @@
+/* src/styles/UserProfile.css */
+.user-profile {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f4ff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-header h1 {
+    color: #333;
+    font-size: 28px;
+  }
+  
+  .profile-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+  }
+  
+  .user-stats, .game-history {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-stats {
+    flex: 1;
+  }
+  
+  .game-history {
+    flex: 2;
+  }
+  
+  h2 {
+    color: #6200ea;
+    margin-bottom: 15px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  tr:hover {
+    background-color: #f5f5f5;
+  }
