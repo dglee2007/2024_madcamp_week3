@@ -1,12 +1,13 @@
+// src/components/Auth/LoginPageWrapper.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import profilePic from '../../assets/profile-pic.jpg';
 import stockIllustration from '../../assets/stock_illustration.png';
-import Login from './Login';  // Login 컴포넌트를 import
-import Register from './Register';  // Register 컴포넌트를 import
-import '../../styles/LoginPageWrapper.css';  // LoginPageWrapper.css 파일 import
+import Login from './Login';  
+import Register from './Register';  
+import '../../styles/LoginPageWrapper.css';
 
-function LoginPageWrapper({isLogin}) {
+function LoginPageWrapper({ isLogin }) {
   const navigate = useNavigate();
 
   return (

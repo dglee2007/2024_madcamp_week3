@@ -1,25 +1,24 @@
+// src/components/MainMenu.js
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext'; // useAuth 훅을 올바르게 가져옴
+import { useAuth } from '../contexts/AuthContext';
 
-import '../styles/MainMenu.css';  // 상대 경로로 CSS 파일 참조
+import '../styles/MainMenu.css';
 import stockIllustration from '../assets/stock_illustration.png';
 import profilePic from '../assets/profile-pic.jpg';
 
-function MainMenu() {
+const MainMenu = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   useEffect(() => {
-    // user 객체가 없으면 로그인 페이지로 리디렉션
-    if (!user) {
-      navigate('/login');
+    if (!loading && !user) {
+      navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleStartGame = async () => {
     try {
-      // 게임 시작하기
       navigate('/game');
     } catch (error) {
       console.error('게임 시작 중 오류 발생:', error);
@@ -27,19 +26,27 @@ function MainMenu() {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate('/main');
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (!user) {
-    return <div>Loading...</div>; // user 객체가 로드될 때까지 로딩 상태를 표시
+    return null; // 로딩 중이 아니고 사용자 정보가 없으면 아무것도 렌더링하지 않음
   }
 
   return (
-    <div className="main-page">
+    <div className="main-menu">
       <header className="header">
-        <div className="logo">Madstocks</div>
+        <h1 onClick={handleLogoClick} style={{ cursor: 'pointer' }}>MadStocks</h1>
         <div className="welcome">Hello {user.username}</div>
         <div className="profile">
           <img src={profilePic} alt="Profile" />
@@ -56,6 +63,6 @@ function MainMenu() {
       </div>
     </div>
   );
-}
+};
 
 export default MainMenu;

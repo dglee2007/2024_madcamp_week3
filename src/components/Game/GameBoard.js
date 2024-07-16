@@ -1,3 +1,5 @@
+// components/Game/GameBoard.js
+
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
@@ -5,23 +7,22 @@ import CompanyIcons from './CompanyIcons';
 import StockTable from './StockTable';
 import PortfolioTable from './PortfolioTable';
 import TradeForm from './TradeForm';
-import StockChangeModal from './StockChangeModal';
-import GameResultModal from './GameResultModal';
-import NewsPopup from './NewsPopup';  // 뉴스 팝업 컴포넌트 추가
+import GameResultPopup from './GameResultPopup';
+import NewsPopup from './NewsPopup';
 import api from '../../services/api';
 import './GameBoard.css';
 
 function GameBoard() {
   const { gameState, setGameState } = useContext(GameContext);
-  const [showStockChangeModal, setShowStockChangeModal] = useState(false);
-  const [showGameResultModal, setShowGameResultModal] = useState(false);
-  const [showNewsPopup, setShowNewsPopup] = useState(false);  // 뉴스 팝업 상태 추가
-  const [selectedCompanyId, setSelectedCompanyId] = useState(null);  // 선택된 회사 ID 상태 추가
+  const [showGameResultPopup, setShowGameResultPopup] = useState(false);
+  const [showNewsPopup, setShowNewsPopup] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
   const [news, setNews] = useState({ headline: '', content: '' });
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [startBalance, setStartBalance] = useState(0);
   const [portfolio, setPortfolio] = useState([]);
+  const navigate = useNavigate();
 
   const updateGameState = useCallback((newState) => {
     setGameState(prevState => ({
@@ -32,25 +33,51 @@ function GameBoard() {
         id: company.id,
         company_id: company.company_id,
       })) : prevState.companies,
+      current_balance: Number(newState.current_balance) || prevState.current_balance,
     }));
   }, [setGameState]);
 
   useEffect(() => {
-    startGame();
-  }, []);
+    let isActive = true;
+    const sessionId = localStorage.getItem('gameSessionId');
 
-  useEffect(() => {
-    console.log('Updated game state:', gameState);
-  }, [gameState]);
+    const loadGame = async () => {
+      if (sessionId) {
+        try {
+          const response = await api.get(`/game/game-state/${sessionId}`);
+          if (isActive) {
+            updateGameState(response.data);
+            setStartBalance(parseFloat(response.data.session.start_balance));
+            await fetchPortfolio(sessionId);
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error('Failed to load game state:', error);
+          if (isActive) {
+            navigate('/main');
+          }
+        }
+      } else {
+        startGame();
+      }
+    };
+
+    loadGame();
+
+    return () => {
+      isActive = false;
+      if (sessionId) {
+        api.post(`/game/end-session/${sessionId}`).catch(console.error);
+        localStorage.removeItem('gameSessionId');
+      }
+    };
+  }, [navigate, updateGameState]);
 
   const startGame = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      console.log('Starting game with userId:', userId);
-      
       if (!userId) {
-        console.error('No userId found. Please login again.');
-        navigate('/login');
+        navigate('/main');
         return;
       }
 
@@ -62,8 +89,7 @@ function GameBoard() {
         newIconMapping[company.id] = `company${index + 1}`;
       });
 
-      console.log('Initial companies:', response.data.companies);
-      console.log('Initial icon mapping:', newIconMapping);
+      const initialBalance = Number(response.data.start_balance) || 10000; // 기본값 설정
 
       updateGameState({
         userId,
@@ -73,53 +99,70 @@ function GameBoard() {
           company_id: c.id,
           id: c.id,
         })),
-        current_balance: parseFloat(response.data.start_balance),
+        current_balance: initialBalance,
         current_year: 2014,
         iconMapping: newIconMapping,
       });
 
+      setStartBalance(initialBalance);
+      localStorage.setItem('gameSessionId', response.data.sessionId);
       await fetchPortfolio(response.data.sessionId);
-    } catch (error) {
-      console.error('Failed to start game:', error.response ? error.response.data : error.message);
-    } finally {
       setIsLoading(false);
+    } catch (error) {
+      console.error('Failed to start game:', error);
+      navigate('/main');
     }
   };
 
   const handleEndTurn = async () => {
-    try {
-      setIsLoading(true);
-      console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
-      
-      const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
-      console.log('End turn response:', endTurnResponse.data);
-      
-      const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
-      console.log('Stock changes response:', stockChangesResponse.data);
-      
-      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
-      console.log('Game state response:', gameStateResponse.data);
-      
-      updateGameState({
-        current_year: endTurnResponse.data.nextYear,
-        current_balance: parseFloat(endTurnResponse.data.newBalance),
-        stockChanges: stockChangesResponse.data,
-        companies: gameStateResponse.data.companies,
-        investments: gameStateResponse.data.investments || [],
-      });
+    if (gameState.current_year >= 2023) {
+      // 게임 종료: 결과 팝업 표시
+      setShowGameResultPopup(true);
+    } else {
+      try {
+        setIsLoading(true);
+        console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
+        
+        const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
+        console.log('End turn response:', endTurnResponse.data);
+        
+        const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
+        console.log('Stock changes response:', stockChangesResponse.data);
+        
+        const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+        console.log('Game state response:', gameStateResponse.data);
+        
+        updateGameState({
+          current_year: endTurnResponse.data.nextYear,
+          current_balance: parseFloat(endTurnResponse.data.newBalance),
+          stockChanges: stockChangesResponse.data,
+          companies: gameStateResponse.data.companies,
+          investments: gameStateResponse.data.investments || [],
+        });
 
-      setShowStockChangeModal(true);
-      if (endTurnResponse.data.nextYear > 2023) {
-        setShowGameResultModal(true);
+        await fetchPortfolio(gameState.sessionId);
+      } catch (error) {
+        console.error('Failed to end turn:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-      await fetchPortfolio(gameState.sessionId);
-    } catch (error) {
-      console.error('Failed to end turn:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
+
+  const handleRestart = async () => {
+    setShowGameResultPopup(false);
+    await startGame();
+  };
+
+  const handleMainMenu = () => {
+    navigate('/main');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/main');
+  };
+
+
 
   const fetchPortfolio = async (sessionId) => {
     try {
@@ -156,7 +199,7 @@ function GameBoard() {
       });
       
       console.log('Trade response:', response.data);
-  
+
       updateGameState({
         current_balance: parseFloat(response.data.session.current_balance),
       });
@@ -186,7 +229,7 @@ function GameBoard() {
         content: news.content || '',
       });
       setIsPremium(isPremium);
-      setShowNewsPopup(true);  // 뉴스 선택 후 팝업 열기
+      setShowNewsPopup(true);
 
       if (remainingBalance !== undefined) {
         updateGameState({
@@ -199,10 +242,6 @@ function GameBoard() {
     }
   };
 
-  const handleGameEnd = () => {
-    navigate('/main');
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -210,7 +249,7 @@ function GameBoard() {
   return (
     <div className="game">
       <div className="header">
-        <h1>Madstocks</h1>
+        <h1 onClick={handleLogoClick} style={{cursor: 'pointer'}}>MadStocks</h1>
         <h2>Hello User</h2>
         <h3>Current Balance: ${gameState.current_balance.toFixed(2)}</h3>
         <h3>Current Year: {gameState.current_year}</h3>
@@ -235,17 +274,19 @@ function GameBoard() {
           />
         </div>
       </div>
-      <button className="next-turn-button" onClick={handleEndTurn} disabled={isLoading}>Next Session</button>
-      {showStockChangeModal && (
-        <StockChangeModal 
-          onClose={() => setShowStockChangeModal(false)}
-          sessionId={gameState.sessionId}
-        />
-      )}
-      {showGameResultModal && (
-        <GameResultModal 
-          onClose={handleGameEnd}
-          finalBalance={gameState.current_balance}
+      <button 
+        className="next-turn-button" 
+        onClick={handleEndTurn} 
+        disabled={isLoading}
+      >
+        {gameState.current_year >= 2023 ? 'Finish' : 'Next Session'}
+      </button>
+      {showGameResultPopup && (
+        <GameResultPopup 
+          finalBalance={Number(gameState.current_balance)}
+          startBalance={Number(startBalance)}
+          onRestart={handleRestart}
+          onMainMenu={handleMainMenu}
         />
       )}
       {showNewsPopup && (

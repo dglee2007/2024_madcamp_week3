@@ -1,16 +1,23 @@
-import React from 'react';
+// components/Game/GameResultPopup.js
 
-function GameResultPopup({ onClose, onPlayAgain, finalBalance, startBalance }) {
-  const profitRate = ((finalBalance - startBalance) / startBalance * 100).toFixed(2);
+import React from 'react';
+import './GameResultPopup.css';
+
+function GameResultPopup({ finalBalance, startBalance, onRestart, onMainMenu }) {
+  const profitRate = startBalance !== 0 
+    ? ((finalBalance - startBalance) / startBalance * 100).toFixed(2)
+    : '0.00';
 
   return (
-    <div className="popup game-result-popup">
+    <div className="popup-overlay">
       <div className="popup-content">
         <h2>Game Over</h2>
-        <p>Your final balance: ${finalBalance.toFixed(2)}</p>
-        <p>Profit rate: {profitRate}%</p>
-        <button onClick={onPlayAgain}>Play Again</button>
-        <button onClick={onClose}>Back to Main Menu</button>
+        <p>Final Balance: ${finalBalance.toFixed(2)}</p>
+        <p>Total Profit Rate: {profitRate}%</p>
+        <div className="button-container">
+          <button onClick={onMainMenu}>Main Menu</button>
+          <button onClick={onRestart}>Play Again</button>
+        </div>
       </div>
     </div>
   );

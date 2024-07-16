@@ -1,17 +1,14 @@
+// src/components/Auth/Login.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
-import { GameContext } from '../../contexts/GameContext';  // GameContext를 import
 import api from '../../services/api';
-import '../../styles/Login.css';  // CSS 파일 import
-
+import '../../styles/Login.css';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { setUser } = useContext(AuthContext);
-  const { setGameState } = useContext(GameContext);  // GameContext에서 setGameState를 가져옴=
-  
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -19,10 +16,7 @@ function Login() {
     try {
       const response = await api.post('/auth/login', { username, password });
       const userData = response.data;
-      setUser(userData);
-      localStorage.setItem('token', userData.token);
-      localStorage.setItem('userId', userData.userId); // userId를 localStorage에 저장
-      setGameState(prevState => ({ ...prevState, userId: userData.userId }));
+      login(userData);
       navigate('/main');
     } catch (error) {
       console.error('Login failed:', error);
@@ -30,7 +24,7 @@ function Login() {
   };
 
   const handleRegister = () => {
-    navigate('/Register');
+    navigate('/register');
   };
 
   return (

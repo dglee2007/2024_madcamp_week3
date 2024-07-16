@@ -1,5 +1,6 @@
+// src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { refreshAccessToken } from '../services/api';
+import api, { refreshAccessToken } from '../services/api';
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,7 @@ export function AuthProvider({ children }) {
           const { accessToken } = await refreshAccessToken(refreshToken);
           const userData = JSON.parse(storedUser);
           setUser({ ...userData, accessToken });
+          api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         } catch (error) {
           console.error('Failed to refresh token:', error);
           localStorage.removeItem('user');
@@ -35,13 +37,17 @@ export function AuthProvider({ children }) {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', userData.accessToken);
     localStorage.setItem('refreshToken', userData.refreshToken);
+    api.defaults.headers.common['Authorization'] = `Bearer ${userData.accessToken}`;
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    delete api.defaults.headers.common['Authorization'];
   };
 
   const value = {
@@ -49,7 +55,6 @@ export function AuthProvider({ children }) {
     login,
     logout,
     loading,
-    setUser
   };
 
   return (
