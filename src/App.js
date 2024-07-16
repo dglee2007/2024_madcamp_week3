@@ -10,6 +10,8 @@ import GameBoard from './components/Game/GameBoard';
 import UserProfile from './components/Profile/UserProfile';
 import RankingList from './components/Ranking/RankingList';
 import GameInstructions from './components/GameInstructions';
+import LoginPageWrapper from './components/Auth/LoginPageWrapper'; // LoginPageWrapper 컴포넌트 추가
+
 
 function App() {
   return (
@@ -17,7 +19,7 @@ function App() {
       <GameProvider>  {/* GameProvider로 감싸기 */}
         <Router>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<LoginPageWrapper />} />
             <Route path="/register" element={<Register />} />
             <Route path="/main" element={<MainMenu />} />
             <Route path="/game" element={<GameBoard />} />

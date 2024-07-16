@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://d621-118-235-90-225.ngrok-free.app/api',
+  baseURL: 'https://5cf6-118-235-90-225.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': '69420',
