@@ -29,15 +29,15 @@
 
     
 
-### 백엔드
-
+### 백엔드 
+(https://github.com/user-attachments/assets/e00d78e6-c3c7-485a-ba21-dface00db7f6)
 - server: node.js
 - Databse: MySQL
 - IDE: Visual Studio Code
 - Cloud: Kcloud
-
+https://github.com/kclhh4318/madcampWeek3_backend
 ### DB스키마
-![DB schema](https://github.com/user-attachments/assets/e00d78e6-c3c7-485a-ba21-dface00db7f6)
+![DB schema]
 
 # API 명세서
 
