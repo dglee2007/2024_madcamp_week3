@@ -1,3 +1,4 @@
+// src/components/Game/GameBoard.js
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
@@ -115,27 +116,6 @@ function GameBoard() {
   };
 
   const handleEndTurn = async () => {
-    if (gameState.current_year >= 2023) {
-      try {
-        setIsLoading(true);
-        console.log(`Ending game for sessionId: ${gameState.sessionId}`);
-        
-        const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
-        console.log('Final end turn response:', endTurnResponse.data);
-        
-        updateGameState({
-          current_balance: parseFloat(endTurnResponse.data.finalBalance),
-        });
-  
-        setShowGameResultPopup(true);
-      } catch (error) {
-        console.error('Failed to end game:', error);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-  
     try {
       setIsLoading(true);
       console.log(`Ending turn for sessionId: ${gameState.sessionId}`);
@@ -143,23 +123,31 @@ function GameBoard() {
       const endTurnResponse = await api.post(`/game/end-turn/${gameState.sessionId}`);
       console.log('End turn response:', endTurnResponse.data);
       
-      const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
-      console.log('Stock changes response:', stockChangesResponse.data);
-      
-      const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
-      console.log('Game state response:', gameStateResponse.data);
-      
-      updateGameState({
-        current_year: endTurnResponse.data.nextYear,
-        current_balance: parseFloat(endTurnResponse.data.newBalance),
-        stockChanges: stockChangesResponse.data,
-        companies: gameStateResponse.data.companies,
-        investments: gameStateResponse.data.investments || [],
-      });
+      if (gameState.current_year >= 2023) {
+        // 게임 종료 로직
+        updateGameState({
+          current_balance: parseFloat(endTurnResponse.data.finalBalance),
+        });
+        setShowGameResultPopup(true);
+      } else {
+        const stockChangesResponse = await api.get(`/game/stock-changes/${gameState.sessionId}`);
+        console.log('Stock changes response:', stockChangesResponse.data);
+        
+        const gameStateResponse = await api.get(`/game/game-state/${gameState.sessionId}`);
+        console.log('Game state response:', gameStateResponse.data);
+        
+        updateGameState({
+          current_year: endTurnResponse.data.nextYear,
+          current_balance: parseFloat(endTurnResponse.data.newBalance),
+          stockChanges: stockChangesResponse.data,
+          companies: gameStateResponse.data.companies,
+          investments: gameStateResponse.data.investments || [],
+        });
   
-      await fetchPortfolio(gameState.sessionId);
+        await fetchPortfolio(gameState.sessionId);
   
-      setShowStockChangePopup(true);
+        setShowStockChangePopup(true);
+      }
     } catch (error) {
       console.error('Failed to end turn:', error);
     } finally {
@@ -288,6 +276,9 @@ function GameBoard() {
           <TradeForm 
             companies={gameState.companies || []} 
             onTrade={handleTrade} 
+            onEndTurn={handleEndTurn}
+            isLastYear={gameState.current_year >= 2023}
+            currentYear={gameState.current_year}
           />
         </div>
       </div>
@@ -322,6 +313,7 @@ function GameBoard() {
       )}
     </div>
   );
+
   
 }
 
