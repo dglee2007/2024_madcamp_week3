@@ -1,43 +1,89 @@
+// src/components/Game/TradeForm.js
 import React, { useState } from 'react';
+import './TradeForm.css';
 
-function TradeForm({ companies, onTrade }) {
-  const [selectedCompanyId, setSelectedCompanyId] = useState('');
-  const [amount, setAmount] = useState(0);
+function TradeForm({ companies, onTrade, onEndTurn, isLastYear, currentYear }) {
+  const [selectedCompany, setSelectedCompany] = useState('');
+  const [amount, setAmount] = useState('');
+  const [action, setAction] = useState('buy');
 
-  const handleTrade = (action) => {
-    if (selectedCompanyId && amount > 0) {
-      console.log(`Calling onTrade: action=${action}, companyId=${selectedCompanyId}, amount=${amount}`);
-      onTrade(action, selectedCompanyId, parseInt(amount, 10));
-      setSelectedCompanyId('');
-      setAmount(0);
-    } else {
-      alert('회사와 수량을 선택해 주세요.');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedCompany && amount) {
+      onTrade(action, selectedCompany, Number(amount));
+      setAmount('');
     }
   };
 
   return (
-    <div className="trade-form">
-      <select
-        value={selectedCompanyId}
-        onChange={(e) => setSelectedCompanyId(e.target.value)}
-      >
-        <option value="">Select a company</option>
-        {companies.map((company) => (
-          <option key={company.company_id} value={company.company_id}>
-            {company.name}
-          </option>
-        ))}
-      </select>
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        placeholder="Amount"
-        min="1"
-      />
-      <button onClick={() => handleTrade('buy')}>Buy</button>
-      <button onClick={() => handleTrade('sell')}>Sell</button>
-    </div>
+    <form className="trade-form" onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="company-select">Company:</label>
+        <select
+          id="company-select"
+          value={selectedCompany}
+          onChange={(e) => setSelectedCompany(e.target.value)}
+          required
+        >
+          <option value="">Select a company</option>
+          {companies.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="amount-input">Amount:</label>
+        <input
+          id="amount-input"
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          min="1"
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Action:</label>
+        <div className="radio-group">
+          <label>
+            <input
+              type="radio"
+              value="buy"
+              checked={action === 'buy'}
+              onChange={() => setAction('buy')}
+            />
+            Buy
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="sell"
+              checked={action === 'sell'}
+              onChange={() => setAction('sell')}
+            />
+            Sell
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" className="trade-button">
+        {action === 'buy' ? 'Buy' : 'Sell'} Stocks
+      </button>
+
+      <button type="button" className="end-turn-button" onClick={onEndTurn}>
+        {isLastYear ? 'Finish' : 'Next Session'}
+      </button>
+
+      {isLastYear && (
+        <p className="last-year-message">
+          Current year: {currentYear}. This is the last year.
+        </p>
+      )}
+    </form>
   );
 }
 
