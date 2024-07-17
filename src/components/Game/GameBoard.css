@@ -1,0 +1,55 @@
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f0f4f8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+}
+
+.left-section {
+  width: 40%;
+}
+
+.right-section {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-table {
+  margin-bottom: 20px;
+}
+
+.next-turn-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #3700b3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.next-turn-button:disabled {
+  background-color: #ccc;
+}
+
+.table-wrapper {
+  margin-bottom: 20px;
+}
