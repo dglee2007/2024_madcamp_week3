@@ -40,6 +40,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('accessToken', userData.accessToken);
     localStorage.setItem('refreshToken', userData.refreshToken);
     localStorage.setItem('userId', userData.userId); // userId 저장 추가
+    localStorage.setItem('username', userData.username); // username 저장 추가
     api.defaults.headers.common['Authorization'] = `Bearer ${userData.accessToken}`;
   };
 
@@ -49,6 +50,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId'); // userId 제거 추가
+    localStorage.removeItem('username'); // username 제거 추가
     delete api.defaults.headers.common['Authorization'];
   };
 

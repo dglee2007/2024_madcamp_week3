@@ -1,5 +1,5 @@
 // src/components/MainMenu.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/MainMenu.css';
@@ -9,10 +9,14 @@ import profilePic from '../assets/profile-pic.jpg'; // profilePic import 추가
 const MainMenu = () => {
   const navigate = useNavigate();
   const { user, logout, loading } = useAuth();
+  const [username, setUsername] = useState(''); // username state 추가
+
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/');
+    } else if (user) {
+      setUsername(user.username || localStorage.getItem('username') || 'User'); // username 설정
     }
   }, [user, loading, navigate]);
 
@@ -56,7 +60,7 @@ const MainMenu = () => {
     <div className="main-menu">
       <header className="header">
         <h1 onClick={handleLogoClick} style={{ cursor: 'pointer' }}>MadStocks</h1>
-        <div className="welcome">Hello {user.username}</div>
+        <div className="welcome">Hello {username}</div>
         <div className="profile" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
           <img src={profilePic} alt="Profile" />
         </div>
