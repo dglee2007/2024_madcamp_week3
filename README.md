@@ -1,74 +1,65 @@
-<<<<<<< HEAD
-# 2024_madcamp_week3
-=======
-# Getting Started with Create React App
+# 🤑MadStocks
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 개요
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+- 2014년으로 돌아가 최고의 매년 주식투자를 하며 최고의 수익률을 남겨보세요!
+- 해당 게임은 제시되는 10년 전의 기업 12개를 보고, 10년간 12개의 기업에 대해 투자활동을 하며 최대한 많은 수익을 남기는 게임입니다.
 
-### `npm start`
+- # 팀원
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- 이동건(KAIST 20 EE & CS)
 
-### `npm test`
+[dglee2007 - Overview](https://github.com/dglee2007)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 이현호(HYU 21 CSE)
 
-### `npm run build`
+[kclhh4318 - Overview](https://github.com/kclhh4318)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# 기술 스택
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 프론트엔드
 
-### `npm run eject`
+- React
+    
+    ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/4fb5e008-4887-488d-9d3a-176d4d5e8624/Untitled.png)
+    
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 백엔드
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- server: node.js
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/01f17116-288c-4f24-a70d-788d67d8f48e/Untitled.png)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Databse: MySQL
 
-## Learn More
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/eb025da4-4a15-4376-8e13-54280065fb0c/Untitled.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- IDE: Visual Studio Code
+    
+    ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/d5264f9b-9328-4cb9-9aad-d6411109e059/Untitled.png)
+    
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Cloud: Kcloud
 
-### Code Splitting
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f6cb388f-3934-47d6-9928-26d2e10eb0fc/83069cc8-3e40-46c8-9fc9-5f3293304d16/Untitled.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# API 명세서
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- 크게 네 분류로 나뉜다.
 
-### Making a Progressive Web App
+| 요청변수 | 설명 |
+| --- | --- |
+| api/auth | 로그인 / 회원가입과 관련된 라우트 |
+| api/game | 게임 기능과 관련된 라우트 |
+| api/ranking | 랭킹 집계와 관련된 라우트 |
+| api/profile | 프로필 표시와 관련된 라우트 |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
->>>>>>> etal
+### api/auth: 로그인 / 회원가입과 관련된 라우트
