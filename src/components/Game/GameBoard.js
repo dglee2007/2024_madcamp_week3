@@ -1,5 +1,5 @@
 // src/components/Game/GameBoard.js
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
 import CompanyIcons from './CompanyIcons';
@@ -23,6 +23,8 @@ function GameBoard() {
   const [isLoading, setIsLoading] = useState(true);
   const [startBalance, setStartBalance] = useState(0);
   const [portfolio, setPortfolio] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const audioRef = useRef(null);
   const navigate = useNavigate();
 
   const updateGameState = useCallback((newState) => {
@@ -250,14 +252,27 @@ function GameBoard() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
   
   return (
     <div className="game">
+      <audio ref={audioRef} src="/bgm.mp3" autoPlay loop />
       <div className="header">
         <h1 onClick={handleLogoClick} style={{cursor: 'pointer'}}>MadStocks</h1>
         <h2>Hello User</h2>
         <h3>Current Balance: ${gameState.current_balance.toFixed(2)}</h3>
         <h3>Current Year: {gameState.current_year}</h3>
+        <button onClick={toggleAudio}>{isPlaying ? 'Pause Music' : 'Play Music'}</button>
       </div>
       <div className="main-content">
         <div className="left-section">
