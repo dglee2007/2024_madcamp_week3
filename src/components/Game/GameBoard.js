@@ -291,13 +291,6 @@ function GameBoard() {
           />
         </div>
       </div>
-      <button 
-        className="next-turn-button" 
-        onClick={handleEndTurn} 
-        disabled={isLoading}
-      >
-        {gameState.current_year >= 2023 ? 'Finish' : 'Next Session'}
-      </button>
       {showGameResultPopup && (
         <GameResultPopup 
           finalBalance={Number(gameState.current_balance)}
