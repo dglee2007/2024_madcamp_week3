@@ -18,7 +18,13 @@ const MainMenu = () => {
 
   const handleStartGame = async () => {
     try {
-      navigate('/game');
+      const userId = localStorage.getItem('userId'); // userId 가져오기
+      if (userId) {
+        navigate('/game');
+      } else {
+        console.error('User ID not found');
+        alert('유효한 사용자 ID가 없습니다.');
+      }
     } catch (error) {
       console.error('게임 시작 중 오류 발생:', error);
       alert('게임을 시작하는 데 실패했습니다.');

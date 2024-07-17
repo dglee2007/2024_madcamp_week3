@@ -1,3 +1,4 @@
+// src/components/Game/GameBoard.js
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameContext } from '../../contexts/GameContext';
@@ -288,6 +289,7 @@ function GameBoard() {
           <TradeForm 
             companies={gameState.companies || []} 
             onTrade={handleTrade} 
+            onEndTurn={handleEndTurn} // onEndTurn 함수 전달
           />
         </div>
       </div>
@@ -322,6 +324,7 @@ function GameBoard() {
       )}
     </div>
   );
+
   
 }
 
