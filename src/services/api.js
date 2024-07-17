@@ -1,11 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://4777-2001-e60-a303-6cdf-51ee-add0-661c-6745.ngrok-free.app/api',
-  headers: {
-    'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': '69420',
-  },
+  baseURL: 'http://172.10.7.129/api',
+  withCredentials: true
 });
 
 export const refreshAccessToken = async (refreshToken) => {
@@ -19,7 +16,6 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   
-  // trade 요청에 대한 특별한 로깅
   if (config.url === '/game/trade') {
     console.log('Trade Request:', {
       url: config.url,
@@ -36,7 +32,6 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use((response) => {
-  // trade 응답에 대한 특별한 로깅
   if (response.config.url === '/game/trade') {
     console.log('Trade Response:', {
       status: response.status,
@@ -47,7 +42,6 @@ api.interceptors.response.use((response) => {
   console.log('Response:', response);
   return response;
 }, (error) => {
-  // trade 오류에 대한 특별한 로깅
   if (error.config.url === '/game/trade') {
     console.error('Trade Error:', {
       status: error.response ? error.response.status : 'Unknown',
